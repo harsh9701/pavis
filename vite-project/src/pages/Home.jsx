@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, ShoppingCart, Star, ArrowRight, Menu, User, Bell } from 'lucide-react';
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 
 export default function HomePage() {
     const [currentSlide, setCurrentSlide] = useState(0);
@@ -217,8 +218,8 @@ export default function HomePage() {
                                 key={category.id}
                                 onClick={() => setSelectedCategory(category.name)}
                                 className={`p-4 rounded-xl border-2 transition-all hover:scale-105 ${selectedCategory === category.name
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-200 bg-white hover:border-gray-300'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 bg-white hover:border-gray-300'
                                     }`}
                             >
                                 <div className="text-2xl mb-2">{category.icon}</div>
@@ -257,9 +258,9 @@ export default function HomePage() {
                                     />
                                     <div className="absolute top-3 left-3">
                                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${product.badge === 'Best Seller' ? 'bg-green-100 text-green-800' :
-                                                product.badge === 'New' ? 'bg-blue-100 text-blue-800' :
-                                                    product.badge === 'Sale' ? 'bg-red-100 text-red-800' :
-                                                        'bg-purple-100 text-purple-800'
+                                            product.badge === 'New' ? 'bg-blue-100 text-blue-800' :
+                                                product.badge === 'Sale' ? 'bg-red-100 text-red-800' :
+                                                    'bg-purple-100 text-purple-800'
                                             }`}>
                                             {product.badge}
                                         </span>
@@ -313,50 +314,7 @@ export default function HomePage() {
             </main>
 
             {/* Footer */}
-            <footer className="bg-gray-900 text-white mt-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <div>
-                            <div className="flex items-center space-x-3 mb-4">
-                                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                                    <span className="text-white font-bold text-xl">B</span>
-                                </div>
-                                <span className="text-2xl font-bold">B2B Hub</span>
-                            </div>
-                            <p className="text-gray-400">Your trusted partner for business solutions and professional equipment.</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-4">Quick Links</h4>
-                            <ul className="space-y-2 text-gray-400">
-                                <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Bulk Orders</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-4">Categories</h4>
-                            <ul className="space-y-2 text-gray-400">
-                                <li><a href="#" className="hover:text-white transition-colors">Office Equipment</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Technology</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Manufacturing</a></li>
-                                <li><a href="#" className="hover:text-white transition-colors">Healthcare</a></li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold mb-4">Contact Info</h4>
-                            <ul className="space-y-2 text-gray-400">
-                                <li>support@b2bhub.com</li>
-                                <li>+1 (555) 123-4567</li>
-                                <li>Mon-Fri: 9AM-6PM EST</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                        <p>&copy; 2025 B2B Hub. All rights reserved.</p>
-                    </div>
-                </div>
-            </footer>
+            <Footer></Footer>
         </div>
     );
 }
