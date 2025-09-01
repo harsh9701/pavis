@@ -9,10 +9,9 @@ export default function AuthPage() {
         email: '',
         password: '',
         confirmPassword: '',
-        firstName: '',
-        lastName: '',
+        fullName: '',
         company: '',
-        phone: ''
+        contactNo: ''
     });
 
     const handleInputChange = (e) => {
@@ -39,10 +38,9 @@ export default function AuthPage() {
             email: '',
             password: '',
             confirmPassword: '',
-            firstName: '',
-            lastName: '',
+            fullName: '',
             company: '',
-            phone: ''
+            contactNo: ''
         });
     };
 
@@ -70,31 +68,17 @@ export default function AuthPage() {
                         {/* Registration Fields */}
                         {!isLogin && (
                             <div className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                                        <input
-                                            type="text"
-                                            name="firstName"
-                                            placeholder="First Name"
-                                            value={formData.firstName}
-                                            onChange={handleInputChange}
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
-                                        <input
-                                            type="text"
-                                            name="lastName"
-                                            placeholder="Last Name"
-                                            value={formData.lastName}
-                                            onChange={handleInputChange}
-                                            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                            required
-                                        />
-                                    </div>
+                                <div className="relative">
+                                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                                    <input
+                                        type="text"
+                                        name="fullName"
+                                        placeholder="Full Name"
+                                        value={formData.fullName}
+                                        onChange={handleInputChange}
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                                        required
+                                    />
                                 </div>
 
                                 <div className="relative">
@@ -114,9 +98,9 @@ export default function AuthPage() {
                                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                                     <input
                                         type="tel"
-                                        name="phone"
+                                        name="contactNo"
                                         placeholder="Phone Number"
-                                        value={formData.phone}
+                                        value={formData.contactNo}
                                         onChange={handleInputChange}
                                         className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                         required
