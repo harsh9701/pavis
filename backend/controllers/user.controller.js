@@ -23,9 +23,17 @@ module.exports.registerUser = async (req, res) => {
             gstNo
         });
 
+        const userData = {
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            contactNo: user.contactNo,
+            companyName: user.companyName
+        }
+
         const token = user.generateAuthToken();
 
-        return res.status(200).json({ token, user });
+        return res.status(200).json({ token, userData });
 
     } catch (err) {
         return res.status(500).json({ message: err.message });
@@ -33,30 +41,42 @@ module.exports.registerUser = async (req, res) => {
 };
 
 module.exports.loginUser = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { email, password } = req.body;
+
+        const user = await userModel.findOne({ email }).select("+password");
+
+        if (!user) {
+            return res.status(401).json({ message: "Invalid email and password" });
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid email and password" });
+        }
+
+        const userData = {
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            contactNo: user.contactNo,
+            companyName: user.companyName
+        }
+
+        const token = user.generateAuthToken();
+
+        res.cookie("token", token);
+
+        res.status(200).json({ token, userData });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
     }
-
-    const { email, password } = req.body;
-
-    const user = await userModel.findOne({ email }).select("+password");
-
-    if (!user) {
-        return res.status(401).json({ message: "Invalid email and password" });
-    }
-
-    const isMatch = await user.comparePassword(password);
-
-    if (!isMatch) {
-        return res.status(401).json({ message: "Invalid email and password" });
-    }
-
-    const token = user.generateAuthToken();
-
-    res.cookie("token", token);
-
-    res.status(200).json({ token, user });
 }
 
 module.exports.getUserProfile = async (req, res) => {

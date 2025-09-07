@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { UserDataContext } from '../context/UserContext';
 import { Eye, EyeOff, Mail, Lock, Building, User, Phone } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
@@ -14,6 +18,10 @@ export default function AuthPage() {
         contactNo: ''
     });
 
+    const navigate = useNavigate();
+
+    const { user, setUser } = useContext(UserDataContext);
+
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -21,12 +29,42 @@ export default function AuthPage() {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault(); // prevent page reload
-        if (isLogin) {
-            console.log('Login submitted:', { email: formData.email, password: formData.password });
-        } else {
-            console.log('Registration submitted:', formData);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (isLogin) {
+                const response = await axios.post(
+                    `${import.meta.env.VITE_BASE_URL}/users/login`,
+                    { email: formData.email, password: formData.password }
+                );
+
+                const data = response.data;
+                setUser(data.userData);
+
+                if (response.status === 200) {
+                    toast.success("Login Successful 🎉");
+                    setTimeout(() => {
+                        navigate("/add-product");
+                    }, 1500);
+                }
+            } else {
+                const response = await axios.post(
+                    `${import.meta.env.VITE_BASE_URL}/users/register`,
+                    formData
+                );
+
+                const data = response.data;
+                setUser(data.userData);
+
+                if (response.status === 200) {
+                    toast.success("Account Created Successfully 🎊");
+                    setTimeout(() => {
+                        navigate("/add-product");
+                    }, 1500);
+                }
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Something went wrong 😢");
         }
     };
 
@@ -238,6 +276,7 @@ export default function AuthPage() {
                     </div>
                 </div>
             </div>
+            <Toaster position="top-center" reverseOrder={false} />
         </div>
     );
 }
