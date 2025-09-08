@@ -19,7 +19,15 @@ module.exports.authUser = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await userModel.findById(decoded._id);
 
-        req.user = user;
+        const userData = {
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            contactNo: user.contactNo,
+            companyName: user.companyName
+        }
+
+        req.user = userData;
 
         return next();
 

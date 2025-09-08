@@ -1,40 +1,9 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search, ShoppingCart, Star, ArrowRight, Menu, User, Bell } from 'lucide-react';
-import Header from "../components/Header"
-import Footer from "../components/Footer"
+import { useState } from 'react';
+import { ShoppingCart, Star, ArrowRight, Menu, User, Bell } from 'lucide-react';
 
 export default function HomePage() {
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('All');
 
-    // Carousel data
-    const carouselItems = [
-        {
-            id: 1,
-            title: "Boost Your Business Efficiency",
-            subtitle: "Premium B2B Solutions",
-            description: "Discover cutting-edge products designed for modern businesses",
-            image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1200&h=600&fit=crop",
-            buttonText: "Explore Now"
-        },
-        {
-            id: 2,
-            title: "Enterprise Grade Equipment",
-            subtitle: "Trusted by 10,000+ Companies",
-            description: "Professional tools and equipment for serious businesses",
-            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=600&fit=crop",
-            buttonText: "View Products"
-        },
-        {
-            id: 3,
-            title: "Bulk Orders & Special Pricing",
-            subtitle: "Save More on Volume Purchases",
-            description: "Get the best deals on bulk orders with exclusive B2B pricing",
-            image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
-            buttonText: "Get Quote"
-        }
-    ];
+    const [selectedCategory, setSelectedCategory] = useState('All');
 
     // Categories data
     const categories = [
@@ -123,84 +92,12 @@ export default function HomePage() {
         }
     ];
 
-    // Auto-advance carousel
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % carouselItems.length);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, []);
-
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % carouselItems.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + carouselItems.length) % carouselItems.length);
-    };
-
     const filteredProducts = selectedCategory === 'All'
         ? products
         : products.filter(product => product.category === selectedCategory);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <Header></Header>
-            {/* Carousel Section */}
-            <section className="relative h-96 md:h-[500px] overflow-hidden">
-                {carouselItems.map((item, index) => (
-                    <div
-                        key={item.id}
-                        className={`absolute inset-0 transition-transform duration-500 ease-in-out ${index === currentSlide ? 'translate-x-0' : index < currentSlide ? '-translate-x-full' : 'translate-x-full'
-                            }`}
-                    >
-                        <div
-                            className="w-full h-full bg-cover bg-center relative"
-                            style={{ backgroundImage: `url(${item.image})` }}
-                        >
-                            <div className="absolute inset-0 bg-black/40"></div>
-                            <div className="relative z-10 flex items-center justify-center h-full">
-                                <div className="text-center text-white max-w-4xl mx-auto px-4">
-                                    <p className="text-lg md:text-xl font-medium mb-2">{item.subtitle}</p>
-                                    <h1 className="text-4xl md:text-6xl font-bold mb-4">{item.title}</h1>
-                                    <p className="text-lg md:text-xl mb-8 opacity-90">{item.description}</p>
-                                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors transform hover:scale-105">
-                                        {item.buttonText}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {/* Carousel Controls */}
-                <button
-                    onClick={prevSlide}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-sm transition-all"
-                >
-                    <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                    onClick={nextSlide}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-2 rounded-full backdrop-blur-sm transition-all"
-                >
-                    <ChevronRight className="w-6 h-6" />
-                </button>
-
-                {/* Dots Indicator */}
-                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                    {carouselItems.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentSlide(index)}
-                            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white' : 'bg-white/50'
-                                }`}
-                        />
-                    ))}
-                </div>
-            </section>
-
             {/* Main Content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Categories Section */}
@@ -312,9 +209,6 @@ export default function HomePage() {
                     </div>
                 </section>
             </main>
-
-            {/* Footer */}
-            <Footer></Footer>
         </div>
     );
 }

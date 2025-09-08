@@ -12,6 +12,21 @@ module.exports.registerUser = async (req, res) => {
 
         const { fullName, company, contactNo, email, password, confirmPassword, gstNo } = req.body;
 
+        const userByEmail = await userModel.findOne({ email });
+        const userByContactNo = await userModel.findOne({ contactNo });
+
+        if (userByEmail) {
+            return res
+                .status(404)
+                .json({ message: "User with this email is already registered" });
+        }
+
+        if (userByContactNo) {
+            return res
+                .status(404)
+                .json({ message: "User with this contact number is already registered" });
+        }
+
         const hashPassword = await userModel.hashPassword(password);
 
         const user = await createUser({
@@ -32,6 +47,13 @@ module.exports.registerUser = async (req, res) => {
         }
 
         const token = user.generateAuthToken();
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,      // set true in production (HTTPS required)
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000, // 24 hour
+        });
 
         return res.status(200).json({ token, userData });
 
@@ -71,7 +93,12 @@ module.exports.loginUser = async (req, res) => {
 
         const token = user.generateAuthToken();
 
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false,      // set true in production (HTTPS required)
+            sameSite: "lax",
+            maxAge: 24 * 60 * 60 * 1000, // 24 hour
+        });
 
         res.status(200).json({ token, userData });
     } catch (err) {
@@ -90,4 +117,4 @@ module.exports.logoutUser = async (req, res) => {
     const blacklistToken = await blacklistTokenModel.create({ token });
 
     res.status(200).json({ message: "Logout user" });
-}
+};
