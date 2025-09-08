@@ -1,95 +1,113 @@
-# `/users/register` Endpoint
+# 🚀 Checkmeout
 
-## Description
+Checkmeout is a B2B website designed to streamline business transactions and simplify the checkout process for customets. The application provides a secure, efficient, and user-friendly platform for businesses to manage orders, products.
 
-Registers a new user in the system. This endpoint accepts user details, validates the input, hashes the password, creates a new user in the database, and returns an authentication token along with the user data.
+## 📖 Overview
 
-## Method
+This is a **full-stack web application** built using the **MERN stack** (MongoDB, Express.js, React.js, Node.js).
+The project includes:
 
-`POST`
+* **Frontend**: Built with React.js
+* **Backend**: Built with Node.js + Express.js
+* **Database**: MongoDB
+* **Authentication**: JWT-based authentication
+* **Validation**: Express-validator for input validation
+* **Error Handling**: User-friendly error responses (e.g., duplicate email, validation errors)
 
-## Endpoint
+## ✨ Features
 
-`/users/register`
+* 🔑 User Registration & Login (JWT Auth)
+* ✅ Express Validator for secure input handling
+* 🔐 Password encryption with bcrypt
+* 🛠️ Protected routes based on authentication
+* 🎨 Responsive frontend built with React
+* 📡 API integration using Axios
+* 🚀 Deployed using (Render / Vercel / Netlify / etc.)
 
-## Required Data (Request Body)
+## 📂 Project Structure
 
-Send a JSON object with the following fields:
-
-| Field         | Type   | Required | Description                       |
-|---------------|--------|----------|-----------------------------------|
-| fullName      | String | Yes      | Full name of the user (min 3 chars) |
-| contactNo     | Number | Yes      | Contact number (min 10 digits)    |
-| email         | String | Yes      | Valid email address               |
-| password      | String | Yes      | Password (min 6 chars)            |
-| confirmPassword | String | Yes    | Must match the password           |
-| company       | String | No       | Company name                      |
-| gstNo         | String | No       | GST number                        |
-
-## Example Request
-
-```json
-{
-  "fullName": "John Doe",
-  "contactNo": "9876543210",
-  "email": "john@example.com",
-  "password": "securePass123",
-  "confirmPassword": "securePass123",
-  "company": "Acme Corp",
-  "gstNo": "22AAAAA0000A1Z5"
-}
+```
+project-name/
+│── backend/          # Express + Node.js code
+│   ├── models/       # Mongoose models
+│   ├── routes/       # Express routes
+│   ├── middleware/   # Auth & validation middleware
+│   └── server.js     # Entry point
+│
+│── frontend/         # React.js app
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   └── App.js
+│   └── package.json
+│
+│── README.md
+│── package.json      # If using a monorepo setup
 ```
 
-## Responses
+## ⚙️ Installation
 
-### Success
+1. Clone the repository:
 
-- **Status Code:** `200 OK`
-- **Body:**
-    ```json
-    {
-      "token": "<jwt_token>",
-      "user": {
-        "_id": "user_id",
-        "fullName": "John Doe",
-        "email": "john@example.com",
-        "contactNo": "9876543210",
-        "companyName": "Acme Corp",
-        "gstNo": "22AAAAA0000A1Z5",
-        "role": "customer"
-      }
-    }
-    ```
+   ```bash
+   git clone https://github.com/your-username/project-name.git
+   cd project-name
+   ```
 
-### Validation Error
+2. Install dependencies:
 
-- **Status Code:** `400 Bad Request`
-- **Body:**
-    ```json
-    {
-      "errors": [
-        {
-          "msg": "Full name must be atleast 3 character",
-          "param": "fullName",
-          "location": "body"
-        }
-        // ...other errors
-      ]
-    }
-    ```
+   * Backend:
 
-### Server Error
+     ```bash
+     cd backend
+     npm install
+     ```
+   * Frontend:
 
-- **Status Code:** `500 Internal Server Error`
-- **Body:**
-    ```json
-    {
-      "message": "Error message"
-    }
-    ```
+     ```bash
+     cd frontend
+     npm install
+     ```
 
----
+3. Set up environment variables (`.env`):
 
-**See implementation:**  
-- Controller: [`controllers/user.controller.js`](backend/controllers/user.controller.js)  
-- Route: [`routes/user.routes.js`](backend/routes/user.routes.js)
+   ```
+   PORT=4000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
+
+4. Run the project:
+
+   * Backend:
+
+     ```bash
+     cd backend
+     npx nodemon
+     ```
+   * Frontend:
+
+     ```bash
+     cd frontend
+     npm run dev
+     ```
+
+## 🧪 API Endpoints
+
+### Authentication
+
+* `POST /users/register` → Register a new user
+* `POST /users/login` → Login user
+
+### User
+
+* `GET /users/profile` → Get logged-in user profile (Protected)
+
+*(Add more endpoints as your app grows)*
+
+## 🛠️ Tech Stack
+
+* **Frontend**: React.js, Axios, React Router, React Hot Toast
+* **Backend**: Node.js, Express.js, Express-validator, JWT, Bcrypt
+* **Database**: MongoDB (Mongoose ORM)
