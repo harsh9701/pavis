@@ -46,53 +46,6 @@ project-name/
 │── package.json      # If using a monorepo setup
 ```
 
-## ⚙️ Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your-username/project-name.git
-   cd project-name
-   ```
-
-2. Install dependencies:
-
-   * Backend:
-
-     ```bash
-     cd backend
-     npm install
-     ```
-   * Frontend:
-
-     ```bash
-     cd frontend
-     npm install
-     ```
-
-3. Set up environment variables (`.env`):
-
-   ```
-   PORT=4000
-   MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
-   ```
-
-4. Run the project:
-
-   * Backend:
-
-     ```bash
-     cd backend
-     npx nodemon
-     ```
-   * Frontend:
-
-     ```bash
-     cd frontend
-     npm run dev
-     ```
-
 ## 🧪 API Endpoints
 
 ### Authentication
