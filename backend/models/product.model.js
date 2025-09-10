@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema(
     {
@@ -25,45 +25,48 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        minimumOrderQuantity: {
+            type: Number,
+            default: 1,
+        },
         bulkPricing: [
             {
-                minQuantity: { type: Number, required: true },
-                price: { type: Number, required: true },
+                quantity: { type: Number },
+                price: { type: Number },
             },
         ],
+        color: {
+            type: String
+        },
+        material: {
+            type: String
+        },
+        dimensions: {
+            length: { type: Number },
+            width: { type: Number },
+            height: { type: Number },
+            unit: { type: String, default: "cm" },
+        },
+        status: {
+            type: String,
+            default: "active",
+            enum: ["active", "inactive"]
+        },
         discount: {
             type: Number, // in percentage
             default: 0,
         },
-        stock: {
-            type: Number,
-            default: 0,
-        },
-        minOrderQuantity: {
-            type: Number,
-            default: 1,
-        },
         mainImage: {
-            url: { type: String, required: true }, // the primary image
-            alt: { type: String },
+            type: String,
+            required: true
         },
-        images: [
-            {
-                url: String,
-                alt: String,
-            },
+        additionalImages: [
+            { type: String }
         ],
-        isActive: {
-            type: Boolean,
-            default: true,
-        },
-        tags: [String],
-        featured: {
-            type: Boolean,
-            default: false,
-        },
     },
     { timestamps: true }
 );
 
-export default mongoose.model("Product", productSchema);
+const productModel = mongoose.model("Product", productSchema);
+
+module.exports = productModel;
