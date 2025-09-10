@@ -8,7 +8,7 @@ import AdminProtectedRoute from "./pages/AdminProtectedRoute";
 import axios from "axios";
 import Layout from "./components/Layout";
 
-axios.defaults.baseURL = "http://localhost:4000";
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
 
 function App() {

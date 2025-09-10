@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Upload, X, Save, Eye } from 'lucide-react';
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { storage } from "../config/firebase/firebase";
 
 const AddProduct = () => {
     const [formData, setFormData] = useState({
@@ -9,7 +11,6 @@ const AddProduct = () => {
         category: '',
         subcategory: '',
         description: '',
-        shortDescription: '',
 
         // Pricing
         unitPrice: '',
@@ -75,23 +76,6 @@ const AddProduct = () => {
         }));
     };
 
-    const addTag = () => {
-        if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-            setFormData(prev => ({
-                ...prev,
-                tags: [...prev.tags, newTag.trim()]
-            }));
-            setNewTag('');
-        }
-    };
-
-    const removeTag = (tagToRemove) => {
-        setFormData(prev => ({
-            ...prev,
-            tags: prev.tags.filter(tag => tag !== tagToRemove)
-        }));
-    };
-
     const validateForm = () => {
         const newErrors = {};
 
@@ -114,9 +98,39 @@ const AddProduct = () => {
         }
     };
 
-    const handleSaveDraft = () => {
-        console.log('Saving draft:', formData);
-        alert('Draft saved!');
+    const handleImageUpload = (e) => {
+        const files = e.target.files;
+        if (!files) return;
+
+        Array.from(files).forEach((file) => {
+            console.log(file.name);
+            console.log(file);
+            const storageRef = ref(storage, `products/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    // optional: show upload progress
+                    const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log(`Upload is ${progress}% done`);
+                },
+                (error) => {
+                    console.log("Failed");
+                    console.error("Upload failed:", error);
+                },
+                () => {
+                    // When upload completes, get the URL
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        setFormData((prev) => ({
+                            ...prev,
+                            images: [...prev.images, { url: downloadURL }]
+                        }));
+                    });
+                }
+            );
+        });
     };
 
     return (
@@ -200,20 +214,6 @@ const AddProduct = () => {
                                             placeholder="Enter subcategory"
                                         />
                                     </div>
-                                </div>
-
-                                <div className="mt-6">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Short Description
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={formData.shortDescription}
-                                        onChange={(e) => handleInputChange('shortDescription', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="Brief product description"
-                                        maxLength="200"
-                                    />
                                 </div>
 
                                 <div className="mt-6">
@@ -431,7 +431,6 @@ const AddProduct = () => {
                                         >
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
-                                            <option value="draft">Draft</option>
                                             <option value="discontinued">Discontinued</option>
                                         </select>
                                     </div>
@@ -488,7 +487,7 @@ const AddProduct = () => {
 
                             {/* Product Images */}
                             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Product Images</h2>
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Product Main Image</h2>
                                 <div className="space-y-4">
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                                         <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
@@ -500,10 +499,10 @@ const AddProduct = () => {
                                         </p>
                                         <input
                                             type="file"
-                                            multiple
                                             accept="image/*"
                                             className="hidden"
                                             id="image-upload"
+                                            onChange={handleImageUpload}
                                         />
                                         <label
                                             htmlFor="image-upload"
@@ -544,15 +543,6 @@ const AddProduct = () => {
                             {/* Action Buttons */}
                             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                                 <div className="space-y-4">
-                                    <button
-                                        type="button"
-                                        onClick={handleSaveDraft}
-                                        className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                    >
-                                        <Save className="w-4 h-4 mr-2" />
-                                        Save as Draft
-                                    </button>
-
                                     <button
                                         type="button"
                                         className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
