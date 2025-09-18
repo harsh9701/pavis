@@ -20,4 +20,26 @@ const uploadBase64ToFirebase = async (base64String, fileName) => {
     return `https://storage.googleapis.com/${bucket.name}/${file.name}`;
 };
 
-module.exports = { uploadBase64ToFirebase };
+// ✅ helper function to delete file from Firebase
+const deleteFromFirebase = async (fileUrl) => {
+    try {
+        // Extract file path from the public URL
+        const baseUrl = `https://storage.googleapis.com/${bucket.name}/`;
+        if (!fileUrl.startsWith(baseUrl)) {
+            throw new Error("Invalid Firebase file URL");
+        }
+
+        const filePath = fileUrl.replace(baseUrl, ""); // e.g. "products/12345-image.png"
+        const file = bucket.file(filePath);
+
+        // Delete the file
+        await file.delete();
+        return { success: true, message: "File deleted successfully" };
+    } catch (error) {
+        console.error("Error deleting file:", error.message);
+        return { success: false, message: error.message };
+    }
+};
+
+
+module.exports = { uploadBase64ToFirebase, deleteFromFirebase };

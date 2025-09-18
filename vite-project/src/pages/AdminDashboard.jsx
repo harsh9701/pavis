@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import {Link} from "react-router-dom";
+import { useState } from 'react';
+import { Link } from "react-router-dom";
 import {
     Users,
     ShoppingCart,
@@ -141,7 +141,7 @@ const AdminDashboard = () => {
 
                         <StatCard
                             title="Total Order Value"
-                            value={`$${stats.totalOrderValue.toLocaleString()}`}
+                            value={`₹${stats.totalOrderValue.toLocaleString()}`}
                             icon={IndianRupee}
                             subtitle="This month"
                             trend={8.2}

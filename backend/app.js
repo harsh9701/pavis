@@ -8,6 +8,7 @@ const connectToDB = require("./db/db");
 
 const userRoute = require("./routes/user.routes");
 const productRoute = require("./routes/product.routes");
+const adminRoute = require("./routes/admin.routes");
 
 connectToDB();
 
@@ -20,8 +21,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(express.json({limit: "10mb"}));
 app.use(cookieParser());
 
-app.use("/users", userRoute);
+app.use("/admin", adminRoute);
 app.use("/product", productRoute);
+app.use("/users", userRoute);
 
 module.exports = app;
 

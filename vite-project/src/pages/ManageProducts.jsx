@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import {Link} from "react-router-dom";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 import {
     Plus,
     X,
@@ -14,8 +15,6 @@ import {
     Search,
     Filter,
     CheckCircle,
-    Truck,
-    PackageCheck,
     Clock,
     Users,
     ShoppingCart
@@ -47,282 +46,85 @@ const ManageProducts = () => {
     }, []);
 
     const fetchProducts = async () => {
-        setLoading(false);
-        setProducts([
-            {
-                _id: "prod_001",
-                productName: "Wireless Mechanical Keyboard",
-                sku: "KEY-WM-001",
-                category: "electronics",
-                subcategory: "computer-accessories",
-                description: "Premium wireless mechanical keyboard with RGB lighting and programmable keys. Features brown switches for tactile feedback.",
-                unitPrice: 89.99,
-                bulkPricing: [
-                    { quantity: 10, price: 84.99 },
-                    { quantity: 25, price: 79.99 },
-                    { quantity: 50, price: 74.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 45, width: 15, height: 3 },
-                color: "Black",
-                material: "Plastic, Aluminum",
-                minimumOrderQuantity: 1,
-                status: "active",
-                stockQuantity: 125,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1541140532154-b024d705b90a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "keyboard.jpg"
-                },
-                additionalImages: [
-                    {
-                        url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                        name: "keyboard-angle.jpg"
-                    }
-                ],
-                createdAt: "2023-05-15T08:30:00Z",
-                updatedAt: "2023-07-20T14:22:00Z"
-            },
-            {
-                _id: "prod_002",
-                productName: "Industrial Air Compressor",
-                sku: "COMP-AIR-205",
-                category: "machinery",
-                subcategory: "air-tools",
-                description: "Heavy-duty industrial air compressor with 5HP motor and 60-gallon tank. Suitable for continuous operation in manufacturing environments.",
-                unitPrice: 1249.99,
-                bulkPricing: [
-                    { quantity: 3, price: 1199.99 },
-                    { quantity: 5, price: 1149.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 120, width: 60, height: 90 },
-                color: "Blue",
-                material: "Steel",
-                minimumOrderQuantity: 1,
-                status: "dispatched",
-                stockQuantity: 8,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "compressor.jpg"
-                },
-                additionalImages: [],
-                createdAt: "2023-06-10T11:15:00Z",
-                updatedAt: "2023-08-05T09:45:00Z"
-            },
-            {
-                _id: "prod_003",
-                productName: "Executive Office Chair",
-                sku: "FURN-CHAIR-EXEC",
-                category: "office-supplies",
-                subcategory: "furniture",
-                description: "Ergonomic executive office chair with lumbar support, adjustable height, and premium leather upholstery.",
-                unitPrice: 349.99,
-                bulkPricing: [
-                    { quantity: 5, price: 329.99 },
-                    { quantity: 10, price: 299.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 65, width: 65, height: 120 },
-                color: "Brown",
-                material: "Leather, Steel, Plastic",
-                minimumOrderQuantity: 1,
-                status: "delivered",
-                stockQuantity: 35,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "office-chair.jpg"
-                },
-                additionalImages: [
-                    {
-                        url: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                        name: "chair-side.jpg"
-                    }
-                ],
-                createdAt: "2023-04-22T14:30:00Z",
-                updatedAt: "2023-07-18T16:20:00Z"
-            },
-            {
-                _id: "prod_004",
-                productName: "Stainless Steel Bolts (50pk)",
-                sku: "HARD-BOLT-SS50",
-                category: "raw-materials",
-                subcategory: "fasteners",
-                description: "High-quality stainless steel bolts, 50-piece set. Corrosion-resistant and suitable for outdoor applications.",
-                unitPrice: 24.99,
-                bulkPricing: [
-                    { quantity: 10, price: 22.99 },
-                    { quantity: 25, price: 19.99 },
-                    { quantity: 100, price: 16.99 }
-                ],
-                taxable: false,
-                dimensions: { length: 5, width: 5, height: 2 },
-                color: "Silver",
-                material: "Stainless Steel",
-                minimumOrderQuantity: 5,
-                status: "active",
-                stockQuantity: 420,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1618941719405-5c0ba6b0bb13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "bolts.jpg"
-                },
-                additionalImages: [],
-                createdAt: "2023-07-01T09:45:00Z",
-                updatedAt: "2023-08-12T11:30:00Z"
-            },
-            {
-                _id: "prod_005",
-                productName: "Cordless Drill Kit",
-                sku: "TOOL-DRILL-20V",
-                category: "tools",
-                subcategory: "power-tools",
-                description: "20V Lithium-Ion cordless drill kit with 2 batteries, charger, and carrying case. Includes various drill bits and accessories.",
-                unitPrice: 159.99,
-                bulkPricing: [
-                    { quantity: 3, price: 149.99 },
-                    { quantity: 5, price: 139.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 35, width: 25, height: 15 },
-                color: "Black & Yellow",
-                material: "Plastic, Metal",
-                minimumOrderQuantity: 1,
-                status: "inactive",
-                stockQuantity: 0,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1572981779307-38f8b02b6291?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "drill-kit.jpg"
-                },
-                additionalImages: [
-                    {
-                        url: "https://images.unsplash.com/photo-1597709037495-4b0e5b6f4c30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                        name: "drill-closeup.jpg"
-                    }
-                ],
-                createdAt: "2023-03-10T16:20:00Z",
-                updatedAt: "2023-08-10T10:15:00Z"
-            },
-            {
-                _id: "prod_006",
-                productName: "Project Management Software License",
-                sku: "SOFT-PM-PRO",
-                category: "software",
-                subcategory: "business-software",
-                description: "Enterprise project management software with team collaboration tools, Gantt charts, and resource management features.",
-                unitPrice: 499.99,
-                bulkPricing: [
-                    { quantity: 5, price: 449.99 },
-                    { quantity: 10, price: 399.99 },
-                    { quantity: 20, price: 349.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 0, width: 0, height: 0 },
-                color: "N/A",
-                material: "Digital",
-                minimumOrderQuantity: 1,
-                status: "active",
-                stockQuantity: 999,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "software.jpg"
-                },
-                additionalImages: [],
-                createdAt: "2023-05-05T13:40:00Z",
-                updatedAt: "2023-08-15T14:25:00Z"
-            },
-            {
-                _id: "prod_007",
-                productName: "Industrial Workbench",
-                sku: "FURN-BENCH-INDL",
-                category: "tools",
-                subcategory: "workstation",
-                description: "Heavy-duty steel workbench with wood top, drawers, and tool storage. Perfect for workshop or garage.",
-                unitPrice: 429.99,
-                bulkPricing: [
-                    { quantity: 2, price: 409.99 },
-                    { quantity: 5, price: 389.99 }
-                ],
-                taxable: true,
-                dimensions: { length: 180, width: 60, height: 90 },
-                color: "Gray",
-                material: "Steel, Wood",
-                minimumOrderQuantity: 1,
-                status: "active",
-                stockQuantity: 12,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "workbench.jpg"
-                },
-                additionalImages: [],
-                createdAt: "2023-06-28T10:15:00Z",
-                updatedAt: "2023-08-14T09:30:00Z"
-            },
-            {
-                _id: "prod_008",
-                productName: "Copper Wire Spool (100m)",
-                sku: "MAT-WIRE-CU100",
-                category: "raw-materials",
-                subcategory: "electrical",
-                description: "100-meter spool of high-quality copper electrical wire. 2.5mm diameter, suitable for residential and commercial applications.",
-                unitPrice: 89.99,
-                bulkPricing: [
-                    { quantity: 5, price: 84.99 },
-                    { quantity: 10, price: 79.99 }
-                ],
-                taxable: false,
-                dimensions: { length: 25, width: 25, height: 10 },
-                color: "Copper",
-                material: "Copper, PVC",
-                minimumOrderQuantity: 2,
-                status: "dispatched",
-                stockQuantity: 18,
-                mainImage: {
-                    url: "https://images.unsplash.com/photo-1605108721178-97a9514c0b9a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80",
-                    name: "copper-wire.jpg"
-                },
-                additionalImages: [],
-                createdAt: "2023-07-15T14:50:00Z",
-                updatedAt: "2023-08-16T12:45:00Z"
-            }
-        ]);
-        // try {
-        //     setLoading(true);
-        //     // const response = await axios.get("/api/products");
-        //     setProducts(response.data);
-        // } catch (error) {
-        //     toast.error("Failed to fetch products");
-        //     console.error("Error fetching products:", error);
-        // } finally {
-        //     setLoading(false);
-        // }
+        try {
+            setLoading(true);
+            const response = await axios.get("/admin/api/products");
+            setProducts(response.data.products);
+        } catch (error) {
+            toast.error("Failed to fetch products");
+            console.error("Error fetching products:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
     };
 
+    // function to delete single product
     const handleDelete = async (productId) => {
-        if (!window.confirm("Are you sure you want to delete this product?")) return;
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it",
+            cancelButtonText: "Cancel",
+        }).then(async (e) => {
+            if (e.isConfirmed) {
+                try {
+                    await toast.promise(
+                        axios.delete(`/product/delete/${productId}`),
+                        {
+                            loading: "Deleting product...",
+                            success: "Product deleted successfully ✅",
+                            error: "Failed to delete product ❌",
+                        }
+                    );
 
-        try {
-            await axios.delete(`/api/products/${productId}`);
-            toast.success("Product deleted successfully");
-            fetchProducts(); // Refresh the list
-        } catch (error) {
-            toast.error("Failed to delete product");
-            console.error("Error deleting product:", error);
-        }
+                    // ✅ Update local state instead of refetching
+                    setProducts((prevProducts) =>
+                        prevProducts.filter((product) => product._id !== productId)
+                    );
+                } catch (error) {
+                    console.error("Error deleting product:", error);
+                }
+            }
+        });
     };
 
     const handleStatusChange = async (productId, newStatus) => {
         try {
-            await axios.patch(`/api/products/${productId}`, { status: newStatus });
-            toast.success("Product status updated");
-            fetchProducts(); // Refresh the list
+            toast.promise(
+                axios.patch(`/product/updateStatus/${productId}`, { status: newStatus }),
+                {
+                    loading: "Updating product...",
+                    success: "Status updated ✅",
+                    error: "Failed to update product ❌",
+                }
+            )
+                .then((response) => {
+                    if (response.status === 200) {
+                        // Update product in local state instead of refetching all
+                        setProducts((prevProducts) =>
+                            prevProducts.map((product) =>
+                                product._id === productId
+                                    ? { ...product, status: newStatus } // update status locally
+                                    : product
+                            )
+                        );
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error updating product:", error);
+                });
         } catch (error) {
             toast.error("Failed to update product status");
             console.error("Error updating product status:", error);
         }
     };
+
 
     const handleEdit = (product) => {
         setEditingProduct(product);
@@ -331,13 +133,47 @@ const ManageProducts = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+
+        if (
+            !editingProduct.productName?.trim() ||
+            !editingProduct.category?.trim() ||
+            !editingProduct.unitPrice ||
+            !editingProduct.minimumOrderQuantity ||
+            !editingProduct.description?.trim() ||
+            !editingProduct.status?.trim()
+        ) {
+            toast.error("Some fields are blank");
+            return;
+        }
+
+        if (Number(editingProduct.unitPrice) <= 0) {
+            toast.error("Unit price should be greater than 0");
+            return;
+        }
+
+        if (Number(editingProduct.minimumOrderQuantity) <= 0) {
+            toast.error("MOQ should be greater than 0");
+            return;
+        }
+
         try {
-            await axios.put(`/api/products/${editingProduct._id}`, editingProduct);
-            toast.success("Product updated successfully");
-            setShowEditModal(false);
-            fetchProducts(); // Refresh the list
+            toast.promise(
+                axios.put(`/product/update/${editingProduct._id}`, editingProduct),
+                {
+                    loading: "Updating product...",
+                    success: "Product updated successfully ✅",
+                    error: "Failed to update product ❌",
+                }
+            )
+                .then(() => {
+                    setShowEditModal(false);
+                    fetchProducts();
+                })
+                .catch((error) => {
+                    console.error("Error updating product:", error);
+                });
         } catch (error) {
-            toast.error("Failed to update product");
+            toast.error(error.response?.data?.message || "Failed to update product");
             console.error("Error updating product:", error);
         }
     };
@@ -345,7 +181,7 @@ const ManageProducts = () => {
     // Filter products based on search term and filters
     const filteredProducts = products.filter(product => {
         const matchesSearch = product.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.sku.toLowerCase().includes(searchTerm.toLowerCase());
+            product.sku.toLowerCase().includes(searchTerm.toLowerCase()) || product.category.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = statusFilter === 'all' || product.status === statusFilter;
         const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
@@ -357,8 +193,6 @@ const ManageProducts = () => {
         switch (status) {
             case 'active': return <CheckCircle className="h-4 w-4 text-green-500" />;
             case 'inactive': return <Clock className="h-4 w-4 text-yellow-500" />;
-            case 'dispatched': return <Truck className="h-4 w-4 text-blue-500" />;
-            case 'delivered': return <PackageCheck className="h-4 w-4 text-purple-500" />;
             default: return <Package className="h-4 w-4 text-gray-500" />;
         }
     };
@@ -367,8 +201,6 @@ const ManageProducts = () => {
         switch (status) {
             case 'active': return 'bg-green-500/10 text-green-500';
             case 'inactive': return 'bg-yellow-500/10 text-yellow-500';
-            case 'dispatched': return 'bg-blue-500/10 text-blue-500';
-            case 'delivered': return 'bg-purple-500/10 text-purple-500';
             default: return 'bg-gray-500/10 text-gray-500';
         }
     };
@@ -464,8 +296,6 @@ const ManageProducts = () => {
                                             <option value="all">All Status</option>
                                             <option value="active">Active</option>
                                             <option value="inactive">Inactive</option>
-                                            <option value="dispatched">Dispatched</option>
-                                            <option value="delivered">Delivered</option>
                                         </select>
                                     </div>
 
@@ -516,7 +346,7 @@ const ManageProducts = () => {
                                                     Price
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
-                                                    Stock
+                                                    MOQ
                                                 </th>
                                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                                     Status
@@ -534,7 +364,7 @@ const ManageProducts = () => {
                                                             <div className="flex-shrink-0 h-10 w-10">
                                                                 <img
                                                                     className="h-10 w-10 rounded-md object-cover"
-                                                                    src={product.mainImage?.url || '/placeholder-image.jpg'}
+                                                                    src={product.mainImage || '/placeholder-image.jpg'}
                                                                     alt={product.productName}
                                                                 />
                                                             </div>
@@ -553,7 +383,7 @@ const ManageProducts = () => {
                                                         <div className="text-sm text-gray-300">₹{product.unitPrice}</div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <div className="text-sm text-gray-300">{product.stockQuantity || 0} units</div>
+                                                        <div className="text-sm text-gray-300">{product.minimumOrderQuantity || 0}</div>
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
                                                         <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(product.status)}`}>
@@ -565,14 +395,14 @@ const ManageProducts = () => {
                                                         <div className="flex justify-end items-center space-x-2">
                                                             <button
                                                                 onClick={() => handleEdit(product)}
-                                                                className="text-blue-400 hover:text-blue-300 transition-colors"
+                                                                className="text-blue-400 hover:text-blue-300 transition-colors pointer"
                                                                 title="Edit product"
                                                             >
                                                                 <Edit className="h-4 w-4" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(product._id)}
-                                                                className="text-red-400 hover:text-red-300 transition-colors"
+                                                                className="text-red-400 hover:text-red-300 transition-colors pointer"
                                                                 title="Delete product"
                                                             >
                                                                 <Trash2 className="h-4 w-4" />
@@ -585,8 +415,6 @@ const ManageProducts = () => {
                                                                 >
                                                                     <option value="active">Active</option>
                                                                     <option value="inactive">Inactive</option>
-                                                                    <option value="dispatched">Dispatched</option>
-                                                                    <option value="delivered">Delivered</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -617,7 +445,7 @@ const ManageProducts = () => {
                                 <h3 className="text-xl font-semibold text-white">Edit Product</h3>
                                 <button
                                     onClick={() => setShowEditModal(false)}
-                                    className="text-gray-400 hover:text-white"
+                                    className="text-gray-400 hover:text-white pointer"
                                 >
                                     <X className="h-6 w-6" />
                                 </button>
@@ -633,18 +461,7 @@ const ManageProducts = () => {
                                             type="text"
                                             value={editingProduct.productName}
                                             onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            SKU
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editingProduct.sku}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, sku: e.target.value })}
+                                            required
                                             className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                                         />
                                     </div>
@@ -656,7 +473,8 @@ const ManageProducts = () => {
                                         <select
                                             value={editingProduct.category}
                                             onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
+                                            required
+                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
                                         >
                                             <option value="electronics">Electronics</option>
                                             <option value="machinery">Machinery</option>
@@ -676,36 +494,23 @@ const ManageProducts = () => {
                                             step="0.01"
                                             value={editingProduct.unitPrice}
                                             onChange={(e) => setEditingProduct({ ...editingProduct, unitPrice: e.target.value })}
+                                            required
                                             className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                                         />
                                     </div>
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Stock Quantity
+                                            MOQ
                                         </label>
                                         <input
                                             type="number"
-                                            value={editingProduct.stockQuantity || 0}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, stockQuantity: e.target.value })}
+                                            step="1"
+                                            value={editingProduct.minimumOrderQuantity}
+                                            onChange={(e) => setEditingProduct({ ...editingProduct, minimumOrderQuantity: e.target.value })}
+                                            required
                                             className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                                         />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Status
-                                        </label>
-                                        <select
-                                            value={editingProduct.status}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, status: e.target.value })}
-                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
-                                        >
-                                            <option value="active">Active</option>
-                                            <option value="inactive">Inactive</option>
-                                            <option value="dispatched">Dispatched</option>
-                                            <option value="delivered">Delivered</option>
-                                        </select>
                                     </div>
                                 </div>
 
@@ -717,21 +522,39 @@ const ManageProducts = () => {
                                         value={editingProduct.description}
                                         onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                                         rows="4"
+                                        required
                                         className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                                     />
+                                </div>
+
+                                <div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Status
+                                        </label>
+                                        <select
+                                            value={editingProduct.status}
+                                            onChange={(e) => setEditingProduct({ ...editingProduct, status: e.target.value })}
+                                            required
+                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
+                                        >
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div className="flex justify-end space-x-4 pt-4 border-t border-gray-700">
                                     <button
                                         type="button"
                                         onClick={() => setShowEditModal(false)}
-                                        className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
+                                        className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors pointer"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                                        className="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors pointer"
                                     >
                                         Update Product
                                     </button>

@@ -32,11 +32,6 @@ const AddProduct = () => {
         bulkPricing: [{ quantity: '', price: '' }],
         taxable: false,
 
-        // Product Details
-        dimensions: { length: '', width: '', height: '' },
-        color: '',
-        material: '',
-
         // Business Details
         minimumOrderQuantity: '',
         status: 'active',
@@ -63,13 +58,6 @@ const AddProduct = () => {
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
-    };
-
-    const handleDimensionChange = (dimension, value) => {
-        setFormData(prev => ({
-            ...prev,
-            dimensions: { ...prev.dimensions, [dimension]: value }
-        }));
     };
 
     const addBulkPricing = () => {
@@ -212,13 +200,23 @@ const AddProduct = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log("Submit press")
         e.preventDefault();
-        if (validateForm()) {
-            try {
-                setLoading(true);
-                const response = await axios.post("/product/new", formData);
+
+        if (!validateForm()) return;
+
+        setLoading(true);
+
+        toast.promise(
+            axios.post("/product/new", formData),
+            {
+                loading: "Adding product...",
+                success: "Product Added 🎉",
+                error: "Failed to add product ❌",
+            }
+        )
+            .then((response) => {
                 if (response.status === 200) {
+                    // Reset form
                     setFormData({
                         productName: '',
                         sku: '',
@@ -228,18 +226,14 @@ const AddProduct = () => {
                         unitPrice: '',
                         bulkPricing: [{ quantity: '', price: '' }],
                         taxable: false,
-                        dimensions: { length: '', width: '', height: '' },
-                        color: '',
-                        material: '',
                         minimumOrderQuantity: '',
                         status: 'active',
                         mainImage: null,
                         additionalImages: []
-                    })
-                    toast.success("Product Added 🎉");
-                    setLoading(false)
+                    });
                 }
-            } catch (error) {
+            })
+            .catch((error) => {
                 if (error.response) {
                     // ✅ express-validator errors
                     if (error.response.data.errors) {
@@ -247,7 +241,7 @@ const AddProduct = () => {
                             toast.error(err.msg);
                         });
                     }
-                    // ✅ custom backend message (e.g. duplicate email)
+                    // ✅ custom backend message
                     else if (error.response.data.message) {
                         toast.error(error.response.data.message);
                     }
@@ -258,8 +252,10 @@ const AddProduct = () => {
                 } else {
                     toast.error("Server not reachable 🚨");
                 }
-            }
-        }
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (
@@ -533,73 +529,6 @@ const AddProduct = () => {
                                             </label>
                                         </div>
                                     </div>
-
-                                    {/* Product Details */}
-                                    <div className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 p-8">
-                                        <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
-                                            <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
-                                            Product Details
-                                        </h2>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-3">
-                                                    Color
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={formData.color}
-                                                    onChange={(e) => handleInputChange('color', e.target.value)}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white placeholder-gray-400"
-                                                    placeholder="e.g., Black, White, Silver"
-                                                />
-                                            </div>
-
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-3">
-                                                    Material
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={formData.material}
-                                                    onChange={(e) => handleInputChange('material', e.target.value)}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white placeholder-gray-400"
-                                                    placeholder="e.g., Steel, Plastic, Wood"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-8">
-                                            <label className="block text-sm font-medium text-gray-300 mb-3">
-                                                Dimensions (cm)
-                                            </label>
-                                            <div className="grid grid-cols-3 gap-4">
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="Length"
-                                                    value={formData.dimensions.length}
-                                                    onChange={(e) => handleDimensionChange('length', e.target.value)}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white placeholder-gray-400"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="Width"
-                                                    value={formData.dimensions.width}
-                                                    onChange={(e) => handleDimensionChange('width', e.target.value)}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white placeholder-gray-400"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    step="0.01"
-                                                    placeholder="Height"
-                                                    value={formData.dimensions.height}
-                                                    onChange={(e) => handleDimensionChange('height', e.target.value)}
-                                                    className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white placeholder-gray-400"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 {/* Sidebar - Right Side */}
@@ -750,24 +679,18 @@ const AddProduct = () => {
                             <div className="flex justify-end space-x-4 pt-8 border-t border-gray-700">
                                 <button
                                     type="button"
-                                    className="px-8 py-3 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    className="px-8 py-3 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pointer"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
-                                    className="px-8 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-sm"
+                                    className="px-8 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-sm pointer"
                                     disabled={loading}
                                 >
                                     {loading ? "Adding..." : "Add Product"}
                                 </button>
                             </div>
-                            {loading && (
-                                <div className="mt-3 text-center">
-                                    <span className="animate-spin inline-block w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full"></span>
-                                    <p className="text-gray-400 mt-2">Please wait...</p>
-                                </div>
-                            )}
                         </form>
                     </div>
                 </main>

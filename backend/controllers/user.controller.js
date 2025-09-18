@@ -100,7 +100,7 @@ module.exports.loginUser = async (req, res) => {
             maxAge: 24 * 60 * 60 * 1000, // 24 hour
         });
 
-        res.status(200).json({ token, userData });
+        return res.status(200).json({ token, userData });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }
@@ -116,5 +116,5 @@ module.exports.logoutUser = async (req, res) => {
 
     const blacklistToken = await blacklistTokenModel.create({ token });
 
-    res.status(200).json({ message: "Logout user" });
+    return res.status(200).json({ message: "Logout user" });
 };

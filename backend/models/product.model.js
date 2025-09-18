@@ -35,18 +35,6 @@ const productSchema = new mongoose.Schema(
                 price: { type: Number },
             },
         ],
-        color: {
-            type: String
-        },
-        material: {
-            type: String
-        },
-        dimensions: {
-            length: { type: Number },
-            width: { type: Number },
-            height: { type: Number },
-            unit: { type: String, default: "cm" },
-        },
         status: {
             type: String,
             default: "active",

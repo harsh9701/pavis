@@ -1,4 +1,4 @@
-const { uploadBase64ToFirebase } = require("../utils/helper");
+const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
 const productModel = require("../models/product.model");
 
 module.exports.addProduct = async (req, res) => {
@@ -61,3 +61,109 @@ module.exports.addProduct = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
+module.exports.deleteProduct = async (req, res) => {
+    try {
+        if (!req.params.id) {
+            return res.status(400).json({ status: false, message: "Product Id is required" });
+        }
+
+        const product = await productModel.findById(req.params.id);
+        if (!product) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }
+
+        // delete main image if exists
+        if (product.mainImage) {
+            await deleteFromFirebase(product.mainImage);
+        }
+
+        // delete additional images if exist
+        if (product.additionalImages && product.additionalImages.length > 0) {
+            for (const imgUrl of product.additionalImages) {
+                await deleteFromFirebase(imgUrl);
+            }
+        }
+
+        // finally, delete product record
+        await productModel.findByIdAndDelete(req.params.id);
+
+        return res.status(200).json({ status: true, message: "Product deleted successfully" });
+    } catch (error) {
+        console.error("Delete product error:", error.message);
+        return res.status(500).json({ status: false, message: "Server error" });
+    }
+};
+
+module.exports.updateProduct = async (req, res) => {
+
+    try {
+
+        const { _id, productName, category, subcategory, description, unitPrice, minimumOrderQuantity, status } = req.body;
+
+        if (
+            !productName?.trim() ||
+            !category?.trim() ||
+            !subcategory?.trim() ||
+            !unitPrice ||
+            !minimumOrderQuantity ||
+            !description?.trim() ||
+            !status?.trim()
+        ) {
+            return res.status(400).json({ status: false, message: "Some fields are blank" });
+        }
+
+        if (Number(unitPrice) <= 0) {
+            return res.status(400).json({ status: false, message: "Unit price should be greater than 0" });
+        }
+
+        if (Number(minimumOrderQuantity) <= 0) {
+            return res.status(400).json({ status: false, message: "MOQ should be greater than 0" });
+        }
+
+        const updateFields = {
+            productName,
+            category,
+            unitPrice,
+            minimumOrderQuantity,
+            description,
+            status
+        };
+
+        const updatedProduct = await productModel.findByIdAndUpdate(
+            _id,
+            { $set: updateFields },   // only specific fields allowed
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedProduct) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }
+
+        return res.status(200).json({ status: true, message: "Product update successfully" });
+    } catch (err) {
+        console.error("Delete product error:", err.message);
+        return res.status(500).json({ status: false, message: "Server error" });
+    }
+};
+
+module.exports.updateProductStatus = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { status } = req.body;
+
+        const updateProduct = await productModel.findByIdAndUpdate(
+            id,
+            { $set: { status } },
+            { new: true, runValidators: true }
+        );
+
+        if (!updateProduct) {
+            return res.status(404).json({ status: false, message: "Product not found" });
+        }
+
+        return res.status(200).json({ status: true, message: "Status update successful" });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal server error" });
+    }
+}
