@@ -27,12 +27,14 @@ const AddProduct = () => {
         subcategory: '',
         description: '',
 
-        // Pricing
+        // Pricing & Taxation
         unitPrice: '',
         bulkPricing: [{ quantity: '', price: '' }],
         taxable: false,
+        taxRate: "",
+        taxType: "",
 
-        // Business Details
+        // MOQ Details
         minimumOrderQuantity: '',
         status: 'active',
 
@@ -126,6 +128,7 @@ const AddProduct = () => {
         const files = Array.from(e.target.files);
         const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
         const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxFiles = 5;
 
         const validFiles = [];
 
@@ -142,6 +145,15 @@ const AddProduct = () => {
 
             validFiles.push(file);
         });
+
+        const noOfFiles = formData.additionalImages.length + validFiles.length;
+
+        // Check limit
+        if (noOfFiles > maxFiles) {
+            toast.error(`You can upload ${maxFiles - formData.additionalImages.length} more images.`);
+            e.target.value = ""; // reset input
+            return;
+        }
 
         // Reset input if no valid files
         if (validFiles.length === 0) {
@@ -172,7 +184,6 @@ const AddProduct = () => {
         });
     };
 
-
     const removeMainImage = () => {
         setFormData(prev => ({ ...prev, mainImage: null }));
     };
@@ -191,6 +202,8 @@ const AddProduct = () => {
         if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
         if (!formData.category) newErrors.category = 'Category is required';
         if (!formData.unitPrice) newErrors.unitPrice = 'Unit price is required';
+        if (!formData.taxRate) newErrors.taxRate = 'Tax rate is required';
+        if (!formData.taxType) newErrors.taxType = 'Tax type is required';
         if (!formData.description.trim()) newErrors.description = 'Description is required';
         if (!formData.mainImage) newErrors.mainImage = 'Main product image is required';
         if (!formData.minimumOrderQuantity) newErrors.minimumOrderQuantity = "MOQ is required";
@@ -204,6 +217,16 @@ const AddProduct = () => {
 
         if (!validateForm()) return;
 
+        if (formData.unitPrice <= 0) {
+            toast.error("Unit price should be greater than 0");
+            return;
+        }
+
+        if (formData.minimumOrderQuantity <= 0) {
+            toast.error("MOQ should be greater than 0");
+            return;
+        }
+
         setLoading(true);
 
         toast.promise(
@@ -211,7 +234,6 @@ const AddProduct = () => {
             {
                 loading: "Adding product...",
                 success: "Product Added 🎉",
-                error: "Failed to add product ❌",
             }
         )
             .then((response) => {
@@ -226,6 +248,8 @@ const AddProduct = () => {
                         unitPrice: '',
                         bulkPricing: [{ quantity: '', price: '' }],
                         taxable: false,
+                        taxRate: "",
+                        taxType: "",
                         minimumOrderQuantity: '',
                         status: 'active',
                         mainImage: null,
@@ -425,7 +449,7 @@ const AddProduct = () => {
                                     <div className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 p-8">
                                         <h2 className="text-xl font-semibold text-white mb-6 flex items-center">
                                             <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
-                                            Pricing
+                                            Pricing & Taxation
                                         </h2>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div>
@@ -442,6 +466,7 @@ const AddProduct = () => {
                                                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.unitPrice ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
                                                             }`}
                                                         placeholder="0.00"
+                                                        min={1}
                                                     />
                                                 </div>
                                                 {errors.unitPrice && <p className="text-red-400 text-sm mt-2">{errors.unitPrice}</p>}
@@ -449,7 +474,7 @@ const AddProduct = () => {
 
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-300 mb-3">
-                                                    Minimum Order Quantity
+                                                    Minimum Order Quantity *
                                                 </label>
                                                 <div className='relative'>
                                                     <input
@@ -459,6 +484,7 @@ const AddProduct = () => {
                                                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.minimumOrderQuantity ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
                                                             }`}
                                                         placeholder="1"
+                                                        min={1}
                                                     />
                                                 </div>
                                                 {errors.minimumOrderQuantity && <p className="text-red-400 text-sm mt-2">{errors.minimumOrderQuantity}</p>}
@@ -466,6 +492,45 @@ const AddProduct = () => {
                                         </div>
 
                                         <div className="mt-8">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">
+                                                    Tax Rate *
+                                                </label>
+                                                <select
+                                                    value={formData.taxRate}
+                                                    onChange={(e) => handleInputChange('taxRate', e.target.value)}
+                                                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.taxRate ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
+                                                        }`}
+                                                >
+                                                    <option value="">Select Tax Rate</option>
+                                                    <option value="0">0 %</option>
+                                                    <option value="5">5 %</option>
+                                                    <option value="12">12 %</option>
+                                                    <option value="18">18 %</option>
+                                                    <option value="28">28 %</option>
+                                                </select>
+                                                {errors.taxRate && <p className="text-red-400 text-sm mt-2">{errors.taxRate}</p>}
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-300 mb-3">
+                                                    Tax Type *
+                                                </label>
+                                                <select
+                                                    value={formData.taxType}
+                                                    onChange={(e) => handleInputChange('taxType', e.target.value)}
+                                                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.taxType ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
+                                                        }`}
+                                                >
+                                                    <option value="">Select tax Type</option>
+                                                    <option value="inclusive">Inclusive</option>
+                                                    <option value="exclusive">Exclusive</option>
+                                                </select>
+                                                {errors.taxType && <p className="text-red-400 text-sm mt-2">{errors.taxType}</p>}
+                                            </div>
+                                        </div>
+
+                                        {/* <div className="mt-8">
                                             <div className="flex items-center justify-between mb-6">
                                                 <label className="block text-sm font-medium text-gray-300">
                                                     Bulk Pricing Tiers
@@ -515,7 +580,7 @@ const AddProduct = () => {
                                                     )}
                                                 </div>
                                             ))}
-                                        </div>
+                                        </div> */}
 
                                         <div className="mt-8">
                                             <label className="flex items-center cursor-pointer">
@@ -619,7 +684,8 @@ const AddProduct = () => {
                                                     Upload additional images
                                                 </p>
                                                 <p className="text-xs text-gray-500 mb-4">
-                                                    Multiple files accepted
+                                                    Multiple files accepted <br />
+                                                    (You can upload up to 5 images)
                                                 </p>
                                                 <input
                                                     type="file"

@@ -29,6 +29,14 @@ const productSchema = new mongoose.Schema(
             type: Number,
             default: 1,
         },
+        taxRate: {
+            type: Number,
+            required: true
+        },
+        taxType: {
+            type: String,
+            required: true
+        },
         bulkPricing: [
             {
                 quantity: { type: Number },

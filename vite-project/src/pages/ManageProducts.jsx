@@ -48,7 +48,7 @@ const ManageProducts = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axios.get("/admin/api/products");
+            const response = await axios.get("/product");
             setProducts(response.data.products);
         } catch (error) {
             toast.error("Failed to fetch products");
@@ -139,6 +139,8 @@ const ManageProducts = () => {
             !editingProduct.category?.trim() ||
             !editingProduct.unitPrice ||
             !editingProduct.minimumOrderQuantity ||
+            !editingProduct.taxRate ||
+            !editingProduct.taxType ||
             !editingProduct.description?.trim() ||
             !editingProduct.status?.trim()
         ) {
@@ -511,6 +513,41 @@ const ManageProducts = () => {
                                             required
                                             className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Tax Rate
+                                        </label>
+                                        <select
+                                            value={editingProduct.taxRate}
+                                            onChange={(e) => setEditingProduct({ ...editingProduct, taxRate: e.target.value })}
+                                            required
+                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
+                                        >
+                                            <option value="">Select Tax Rate</option>
+                                            <option value="0">0 %</option>
+                                            <option value="5">5 %</option>
+                                            <option value="12">12 %</option>
+                                            <option value="18">18 %</option>
+                                            <option value="28">28 %</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Tax Type
+                                        </label>
+                                        <select
+                                            value={editingProduct.taxType}
+                                            onChange={(e) => setEditingProduct({ ...editingProduct, taxType: e.target.value })}
+                                            required
+                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
+                                        >
+                                            <option value="">Select tax Type</option>
+                                            <option value="inclusive">Inclusive</option>
+                                            <option value="exclusive">Exclusive</option>
+                                        </select>
                                     </div>
                                 </div>
 

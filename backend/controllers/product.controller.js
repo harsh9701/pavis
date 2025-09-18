@@ -4,7 +4,7 @@ const productModel = require("../models/product.model");
 module.exports.addProduct = async (req, res) => {
 
     try {
-        const { productName, sku, category, subcategory, description, unitPrice, minimumOrderQuantity, bulkPricing, color, material, dimensions, status, mainImage, additionalImages } = req.body;
+        const { productName, sku, category, subcategory, description, unitPrice, taxType, taxRate, minimumOrderQuantity, bulkPricing, status, mainImage, additionalImages } = req.body;
 
         if (unitPrice < 1 || minimumOrderQuantity < 1) {
             return res.status(400).json({ success: false, message: "Price, stock & MOQ should be greater than 0" });
@@ -14,7 +14,9 @@ module.exports.addProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
-        const isProductExist = await productModel.findOne({ sku });
+        const productSku = sku.toLowerCase();
+
+        const isProductExist = await productModel.findOne({ sku: productSku });
 
         if (isProductExist) {
             return res.status(400).json({ success: false, message: "This SKU is already exist" });
@@ -40,16 +42,15 @@ module.exports.addProduct = async (req, res) => {
 
         const product = await productModel.create({
             productName,
-            sku,
+            sku: productSku,
             category,
             subcategory,
             description,
             unitPrice,
+            taxRate,
+            taxType,
             minimumOrderQuantity,
             bulkPricing,
-            color,
-            material,
-            dimensions,
             status,
             mainImage: mainImageUrl,
             additionalImages: additionalImageUrls
@@ -99,13 +100,15 @@ module.exports.updateProduct = async (req, res) => {
 
     try {
 
-        const { _id, productName, category, subcategory, description, unitPrice, minimumOrderQuantity, status } = req.body;
+        const { _id, productName, category, subcategory, description, unitPrice, taxRate, taxType, minimumOrderQuantity, status } = req.body;
 
         if (
             !productName?.trim() ||
             !category?.trim() ||
             !subcategory?.trim() ||
             !unitPrice ||
+            !taxRate ||
+            !taxType ||
             !minimumOrderQuantity ||
             !description?.trim() ||
             !status?.trim()
@@ -125,6 +128,8 @@ module.exports.updateProduct = async (req, res) => {
             productName,
             category,
             unitPrice,
+            taxRate,
+            taxType,
             minimumOrderQuantity,
             description,
             status
@@ -166,4 +171,13 @@ module.exports.updateProductStatus = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ status: false, message: "Internal server error" });
     }
-}
+};
+
+module.exports.getProducts = async (req, res) => {
+    try {
+        const products = await productModel.find({}, { bulkPricing: 0, color: 0, material: 0, dimensions: 0, discount: 0, additionalImages: 0 });
+        return res.status(200).json({ status: true, products });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Sever Error" });
+    }
+};
