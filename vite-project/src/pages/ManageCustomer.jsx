@@ -17,6 +17,7 @@ import {
     Eye,
     Mail,
     Phone,
+    LayoutGrid
 } from 'lucide-react';
 import axios from "axios";
 
@@ -35,6 +36,7 @@ const ManageCustomers = () => {
         { name: 'Add Product', icon: Plus, path: "/add-product" },
         { name: 'Manage Products', icon: Package, path: "/manage-products" },
         { name: 'Manage Customers', icon: Users, active: true, path: "/manage-customers" },
+        { name: 'Manage Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
         { name: 'Settings', icon: Settings, path: "/admin-setting" }
     ];

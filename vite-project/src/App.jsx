@@ -14,6 +14,7 @@ import UserLayout from "./components/UserLayout";
 import axios from "axios";
 import ManageProducts from "./pages/ManageProducts";
 import ManageCustomers from "./pages/ManageCustomer";
+import ManageCategories from "./pages/Categories";
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -49,6 +50,11 @@ function App() {
           <Route path="/manage-customers" element={
             <AdminProtectedRoute>
               <ManageCustomers />
+            </AdminProtectedRoute>
+          } />
+          <Route path="/manage-categories" element={
+            <AdminProtectedRoute>
+              <ManageCategories />
             </AdminProtectedRoute>
           } />
 

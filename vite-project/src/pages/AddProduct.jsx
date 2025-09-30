@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { Link } from "react-router-dom";
 import {
@@ -13,7 +13,8 @@ import {
     Settings,
     Menu,
     TrendingUp,
-    UserCheck
+    UserCheck,
+    LayoutGrid
 } from 'lucide-react';
 import axios from "axios";
 
@@ -45,15 +46,31 @@ const AddProduct = () => {
 
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
     const navigationItems = [
         { name: 'Dashboard', icon: TrendingUp, path: "/admin" },
         { name: 'Add Product', icon: Plus, active: true, path: "/add-product" },
         { name: 'Manage Products', icon: Package, path: "/manage-products" },
         { name: 'Manage Customers', icon: Users, path: "/manage-customers" },
+        { name: 'Manage Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
         { name: 'Settings', icon: Settings, path: "/admin-setting" }
     ];
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get("/admin/categories");
+                setCategories(response.data.categories);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -147,6 +164,9 @@ const AddProduct = () => {
         });
 
         const noOfFiles = formData.additionalImages.length + validFiles.length;
+        // console.log(noOfFiles);
+        // console.log(formData.additionalImages.length);
+        // console.log(validFiles.length);
 
         // Check limit
         if (noOfFiles > maxFiles) {
@@ -201,6 +221,7 @@ const AddProduct = () => {
         if (!formData.productName.trim()) newErrors.productName = 'Product name is required';
         if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
         if (!formData.category) newErrors.category = 'Category is required';
+        if (!formData.subcategory) newErrors.subcategory = 'Sub category is required';
         if (!formData.unitPrice) newErrors.unitPrice = 'Unit price is required';
         if (!formData.taxRate) newErrors.taxRate = 'Tax rate is required';
         if (!formData.taxType) newErrors.taxType = 'Tax type is required';
@@ -255,6 +276,8 @@ const AddProduct = () => {
                         mainImage: null,
                         additionalImages: []
                     });
+                    setSelectedCategory("");
+                    setSelectedSubcategory("");
                 }
             })
             .catch((error) => {
@@ -399,18 +422,21 @@ const AddProduct = () => {
                                                     Category *
                                                 </label>
                                                 <select
-                                                    value={formData.category}
-                                                    onChange={(e) => handleInputChange('category', e.target.value)}
+                                                    value={selectedCategory}
+                                                    onChange={(e) => {
+                                                        setSelectedCategory(e.target.value);
+                                                        handleInputChange('category', e.target.value);
+                                                        setSelectedSubcategory(""); // reset subcategory when category changes
+                                                    }}
                                                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.category ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
                                                         }`}
                                                 >
-                                                    <option value="">Select category</option>
-                                                    <option value="electronics">Electronics</option>
-                                                    <option value="machinery">Machinery</option>
-                                                    <option value="office-supplies">Office Supplies</option>
-                                                    <option value="raw-materials">Raw Materials</option>
-                                                    <option value="tools">Tools & Equipment</option>
-                                                    <option value="software">Software</option>
+                                                    <option value="">Choose Category</option>
+                                                    {categories.map((cat) => (
+                                                        <option key={cat._id} value={cat._id}>
+                                                            {cat.name}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                                 {errors.category && <p className="text-red-400 text-sm mt-2">{errors.category}</p>}
                                             </div>
@@ -419,13 +445,34 @@ const AddProduct = () => {
                                                 <label className="block text-sm font-medium text-gray-300 mb-3">
                                                     Subcategory
                                                 </label>
-                                                <input
+                                                {/* <input
                                                     type="text"
                                                     value={formData.subcategory}
                                                     onChange={(e) => handleInputChange('subcategory', e.target.value)}
                                                     className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-500 transition-all bg-gray-700 text-white"
                                                     placeholder="Enter subcategory"
-                                                />
+                                                /> */}
+                                                <select
+                                                    value={selectedSubcategory}
+                                                    onChange={(e) => {
+                                                        setSelectedSubcategory(e.target.value);
+                                                        handleInputChange('subcategory', e.target.value);
+                                                    }}
+                                                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-gray-700 text-white ${errors.subcategory ? 'border-red-500 bg-red-900/20' : 'border-gray-600 hover:border-gray-500'
+                                                        }`}
+                                                    disabled={!selectedCategory} // disable until category chosen
+                                                >
+                                                    <option value="">Choose Subcategory</option>
+                                                    {selectedCategory &&
+                                                        categories
+                                                            .find((cat) => cat._id === selectedCategory)
+                                                            ?.subcategories.map((sub, index) => (
+                                                                <option key={index} value={sub}>
+                                                                    {sub}
+                                                                </option>
+                                                            ))}
+                                                </select>
+                                                {errors.subcategory && <p className="text-red-400 text-sm mt-2">{errors.subcategory}</p>}
                                             </div>
                                         </div>
 
@@ -582,7 +629,7 @@ const AddProduct = () => {
                                             ))}
                                         </div> */}
 
-                                        <div className="mt-8">
+                                        {/* <div className="mt-8">
                                             <label className="flex items-center cursor-pointer">
                                                 <input
                                                     type="checkbox"
@@ -592,7 +639,7 @@ const AddProduct = () => {
                                                 />
                                                 <span className="ml-3 text-sm text-gray-300">This product is taxable</span>
                                             </label>
-                                        </div>
+                                        </div> */}
                                     </div>
                                 </div>
 

@@ -10,7 +10,8 @@ import {
     Menu,
     X,
     TrendingUp,
-    UserCheck
+    UserCheck,
+    LayoutGrid
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -31,6 +32,7 @@ const AdminDashboard = () => {
         { name: 'Add Product', icon: Plus, path: "/add-product" },
         { name: 'Manage Products', icon: Package, path: "/manage-products" },
         { name: 'Manage Customers', icon: Users, path: "/manage-customers" },
+        { name: 'Manage Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
         { name: 'Settings', icon: Settings, path: "/admin-setting" }
     ];
@@ -191,6 +193,11 @@ const AdminDashboard = () => {
                             <Link to="/manage-orders" className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
                                 <ShoppingCart className="h-4 w-4" />
                                 <span>View Orders</span>
+                            </Link>
+
+                            <Link to="/manage-categories" className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-medium transition-colors flex items-center justify-center space-x-2">
+                                <ShoppingCart className="h-4 w-4" />
+                                <span>Manage Category</span>
                             </Link>
                         </div>
                     </div>
