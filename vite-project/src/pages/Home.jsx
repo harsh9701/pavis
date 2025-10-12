@@ -1,7 +1,65 @@
 import { useState, useEffect } from 'react';
-import { ArrowRight, ShoppingBag, Sparkles, TrendingUp, Package, Users, Zap, Star, ChevronRight } from 'lucide-react';
+import { ArrowRight, ShoppingBag, ShoppingCart, Sparkles, TrendingUp, Package, Users, Zap, Star, ChevronRight } from 'lucide-react';
+import axios from 'axios';
+import Carousel from '../components/Carousel'
+import ProductCard from '../components/ProductCard';
 
 export default function WholseraHomepage() {
+
+    const [categories, setCategories] = useState([]);
+    const [freshProducts, setFreshProducts] = useState([]);
+
+    const fetchFreshProducts = async () => {
+        try {
+            const response = await axios.get("/product/new-arrivals");
+            setFreshProducts(response.data.products || []);
+        } catch (error) {
+            console.error("Error fetching fresh products:", error);
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get("/admin/categories");
+            setCategories(response.data.categories);
+        } catch (error) {
+            toast.error("Failed to fetch products");
+            console.error("Error fetching products:", error);
+        }
+    };
+
+    const slides = [
+        {
+            image: "https://images.unsplash.com/photo-1581091012184-8f2a49e4e123?auto=format&fit=crop&w=1600&q=80",
+            title: "Discover Amazing Products",
+            subtitle: "Explore our exclusive collection for retailers and wholesalers",
+            cta: "Shop Now",
+        },
+        {
+            image: "https://images.unsplash.com/photo-1556742400-b5c3f8e0c98b?auto=format&fit=crop&w=1600&q=80",
+            title: "Connect with Trusted Manufacturers",
+            subtitle: "Find verified manufacturers and grow your business",
+            cta: "Get Started",
+        },
+        {
+            image: "https://images.unsplash.com/photo-1593011959404-3e6e2c2c44e3?auto=format&fit=crop&w=1600&q=80",
+            title: "Fast Delivery Across India",
+            subtitle: "We ensure your orders reach you on time, every time",
+            cta: "Learn More",
+        },
+        {
+            image: "https://images.unsplash.com/photo-1607083204015-4b46f8f6f53e?auto=format&fit=crop&w=1600&q=80",
+            title: "Exclusive Wholesale Deals",
+            subtitle: "Get the best prices directly from manufacturers",
+            cta: "View Deals",
+        },
+    ];
+
+    // Fetch categories on component mount
+    useEffect(() => {
+        fetchCategories();
+        fetchFreshProducts();
+    }, []);
 
     return (
         <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -13,8 +71,57 @@ export default function WholseraHomepage() {
                 <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-orange-500/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
+            {/* Category Section */}
+            <section className="relative z-10 pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-12">
+                <div className="overflow-x-auto no-scrollbar">
+                    <div className="flex gap-8 justify-start sm:justify-center w-max sm:w-full">
+                        {categories.map((cat, i) => (
+                            <div
+                                key={i}
+                                className="flex flex-col items-center flex-shrink-0 cursor-pointer transition-transform"
+                            >
+                                <div className="w-22 h-22 lg:w-28 lg:h-28 rounded-full overflow-hidden shadow-lg">
+                                    <img
+                                        src={cat.imageUrl}
+                                        alt={cat.name}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                                <span className="mt-2 text-sm font-semibold text-white text-center">
+                                    {cat.name}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Fresh Products Section */}
+            <section className="relative z-10 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black mb-8 sm:mb-12 text-center">
+                        <span className="bg-gradient-to-r from-orange-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                            Fresh Arrivals
+                        </span>
+                    </h2>
+
+                    {freshProducts.length > 0 ? (
+                        <ProductCard freshProducts={freshProducts} />
+                    ) : (
+                        <div className="text-center py-16">
+                            <div className="inline-block p-6 bg-gray-800/50 rounded-2xl border border-gray-700">
+                                <ShoppingCart className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                                <p className="text-gray-400 text-lg">No fresh products available yet.</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* <Carousel slides={slides} /> */}
+
             {/* Hero Section */}
-            <section className="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+            <section className="relative z-10 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-8 mb-16">
                         <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-tight">

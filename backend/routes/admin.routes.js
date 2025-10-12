@@ -6,7 +6,7 @@ const { getCustomers, addCategory, deleteCategory, getCategories, addSubCategory
 const { authUser } = require("../middlewares/auth.middleware");
 
 router.get("/customers", authUser, getCustomers);
-router.get("/categories", authUser, getCategories);
+router.get("/categories", getCategories);
 router.post("/addCategory", authUser, upload.single("image"), addCategory);
 router.post("/addSubcategory", authUser, addSubCategory);
 router.post("/deleteSubcategory", authUser, deleteSubcategory);

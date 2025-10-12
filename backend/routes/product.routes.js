@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer");
-const { addProduct, deleteProduct, updateProduct, updateProductStatus, getProducts } = require("../controllers/product.controller");
+const { addProduct, deleteProduct, updateProduct, updateProductStatus, getProducts, newArrivals } = require("../controllers/product.controller");
 const { authUser } = require("../middlewares/auth.middleware");
 
 router.get("/", authUser, getProducts);
+router.get("/new-arrivals", newArrivals);
 
 router.post("/new", authUser, upload.fields([
     { name: "mainImage", maxCount: 1 },

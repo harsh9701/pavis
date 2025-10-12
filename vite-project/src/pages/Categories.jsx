@@ -42,7 +42,7 @@ const ManageCategories = () => {
         { name: 'Settings', icon: Settings, path: "/admin-setting" }
     ];
 
-    // Fetch products on component mount
+    // Fetch categories on component mount
     useEffect(() => {
         fetchCategories();
     }, []);
@@ -62,9 +62,9 @@ const ManageCategories = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
         if (!allowedTypes.includes(file.type)) {
-            toast.error("Only JPG, JPEG, and PNG files are allowed");
+            toast.error("Only JPG, JPEG, WEBP and PNG files are allowed");
             e.target.value = "";
             setNewCategory(prev => ({
                 ...prev,
