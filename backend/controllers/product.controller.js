@@ -1,5 +1,6 @@
 const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
 const productModel = require("../models/product.model");
+const cartModel = require("../models/cart.model");
 
 module.exports.addProduct = async (req, res) => {
 
@@ -58,7 +59,6 @@ module.exports.addProduct = async (req, res) => {
 
         return res.status(200).json({ success: false, message: "Product created successfully" });
     } catch (err) {
-        console.log(err);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
@@ -192,5 +192,28 @@ module.exports.newArrivals = async (req, res) => {
         return res.status(200).json({ status: true, products });
     } catch (err) {
         return res.status(500).json({ status: false, message: "Internal Sever Error" });
+    }
+};
+
+module.exports.addToCart = async (req, res) => {
+    try {
+        const updatedCart = req.body.cart;
+
+        let cart = await cartModel.findOne({ userId: req.user._id });
+
+        if (!cart) {
+            cart = new cartModel({
+                userId: req.user._id,
+                items: updatedCart
+            });
+        } else {
+            cart.items = updatedCart;
+        }
+
+        await cart.save();
+
+        return res.status(200).json({ status: true, message: "Product Added to cart" });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 };

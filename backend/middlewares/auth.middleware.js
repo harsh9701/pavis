@@ -20,6 +20,7 @@ module.exports.authUser = async (req, res, next) => {
         const user = await userModel.findById(decoded._id);
 
         const userData = {
+            _id: user._id,
             fullName: user.fullName,
             email: user.email,
             role: user.role,

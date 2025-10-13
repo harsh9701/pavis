@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, ShoppingBag, ShoppingCart, Sparkles, TrendingUp, Package, Users, Zap, Star, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
-import Carousel from '../components/Carousel'
+import Carousel from '../components/Carousel';
 import ProductCard from '../components/ProductCard';
 
 export default function WholseraHomepage() {
@@ -11,7 +12,7 @@ export default function WholseraHomepage() {
 
     const fetchFreshProducts = async () => {
         try {
-            const response = await axios.get("/product/new-arrivals");
+            const response = await axios.get("/product/newArrivals");
             setFreshProducts(response.data.products || []);
         } catch (error) {
             console.error("Error fetching fresh products:", error);
@@ -74,7 +75,7 @@ export default function WholseraHomepage() {
             {/* Category Section */}
             <section className="relative z-10 pt-16 pb-10 px-4 sm:px-6 lg:px-8 mt-12">
                 <div className="overflow-x-auto no-scrollbar">
-                    <div className="flex gap-8 justify-start sm:justify-center w-max sm:w-full">
+                    <div className="flex gap-4 justify-start sm:justify-center w-max sm:w-full">
                         {categories.map((cat, i) => (
                             <div
                                 key={i}
@@ -95,6 +96,9 @@ export default function WholseraHomepage() {
                     </div>
                 </div>
             </section>
+
+            {/* Carousel Section */}
+            {/* <Carousel slides={slides} /> */}
 
             {/* Fresh Products Section */}
             <section className="relative z-10 px-4 sm:px-6 lg:px-8">
@@ -118,13 +122,19 @@ export default function WholseraHomepage() {
                 </div>
             </section>
 
-            {/* <Carousel slides={slides} /> */}
+            <section className="py-10 px-5 lg:py-15 lg:px-40">
+                <img
+                    src="/WholseraFullLogo.png"
+                    alt="Logo"
+                    className="w-full h-full object-cover"
+                />
+            </section>
 
             {/* Hero Section */}
             <section className="relative z-10 pb-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center space-y-8 mb-16">
-                        <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-tight">
+                        {/* <h1 className="text-6xl sm:text-7xl lg:text-8xl font-black leading-tight">
                             <span className="block mb-4">Wholesale</span>
                             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text text-transparent">
                                 Simplified
@@ -133,43 +143,43 @@ export default function WholseraHomepage() {
 
                         <p className="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
                             Connect directly with manufacturers. Scale your business. Experience wholesale like never before.
-                        </p>
+                        </p> */}
 
-                        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-8">
-                            <button className="group relative px-10 py-5 rounded-full font-bold text-lg overflow-hidden">
+                        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                            <Link to='/explore' className="group relative px-10 py-5 rounded-full font-bold text-lg overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 transition-transform group-hover:scale-105"></div>
                                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 blur-xl opacity-50"></div>
                                 <span className="relative flex items-center">
-                                    Start Selling <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
+                                    Explore Products <ArrowRight className="ml-2 group-hover:translate-x-2 transition-transform" size={20} />
                                 </span>
-                            </button>
-                            <button className="px-10 py-5 rounded-full font-bold text-lg border-2 border-gray-700 hover:border-purple-500 transition">
+                            </Link>
+                            {/* <button className="px-10 py-5 rounded-full font-bold text-lg border-2 border-gray-700 hover:border-purple-500 transition">
                                 Explore Products
-                            </button>
+                            </button> */}
                         </div>
 
-                        <div className="flex flex-wrap justify-center gap-12 pt-12 text-center">
+                        {/* <div className="flex flex-wrap justify-center gap-10 pt-12 text-center">
                             <div>
-                                <div className="text-4xl font-black bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">15K+</div>
-                                <div className="text-sm text-gray-500 mt-1">Active Sellers</div>
+                                <div className="text-2xl lg:text-4xl font-black bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">3.5K+</div>
+                                <div className="text-sm text-gray-500 mt-1">Orders</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-black bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">80K+</div>
+                                <div className="text-2xl lg:text-4xl font-black bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">4K+</div>
                                 <div className="text-sm text-gray-500 mt-1">Products</div>
                             </div>
                             <div>
-                                <div className="text-4xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">2M+</div>
-                                <div className="text-sm text-gray-500 mt-1">Orders</div>
+                                <div className="text-2xl lg:text-4xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">450+</div>
+                                <div className="text-sm text-gray-500 mt-1">Active Customers</div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Floating Cards */}
                     <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                         {[
-                            { icon: ShoppingBag, title: 'Electronics', gradient: 'from-blue-500 to-cyan-500' },
+                            { icon: ShoppingBag, title: 'Stationary', gradient: 'from-blue-500 to-cyan-500' },
                             { icon: Package, title: 'Fashion', gradient: 'from-purple-500 to-pink-500' },
-                            { icon: Sparkles, title: 'FMCG', gradient: 'from-orange-500 to-yellow-500' }
+                            { icon: Sparkles, title: 'Bags', gradient: 'from-orange-500 to-yellow-500' }
                         ].map((item, i) => (
                             <div key={i} className="group relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 border border-gray-700 hover:border-gray-600 transition-all cursor-pointer overflow-hidden">
                                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-10 transition-opacity`}></div>
@@ -184,7 +194,7 @@ export default function WholseraHomepage() {
             </section>
 
             {/* Features Section */}
-            <section id="features" className="relative z-10 py-32 px-4 sm:px-6 lg:px-8">
+            <section id="features" className="relative z-10 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-20">
                         <h2 className="text-5xl sm:text-6xl font-black mb-6">

@@ -16,19 +16,18 @@ export default function Carousel({ slides }) {
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
     return (
-        <div className="relative h-64 md:h-96 lg:h-[500px] overflow-hidden">
+        <div className="relative h-64 md:h-96 lg:h-[500px] overflow-hidden rounded-2xl backdrop-blur-md bg-white/10 shadow-lg">
             {slides.map((slide, idx) => (
                 <div
                     key={idx}
-                    className={`absolute inset-0 transition-opacity duration-500 ${idx === currentSlide ? "opacity-100" : "opacity-0"
-                        }`}
+                    className={`absolute inset-0 transition-opacity duration-500 ${idx === currentSlide ? "opacity-100" : "opacity-0"}`}
                 >
                     <img
                         src={slide.image}
                         alt={slide.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover opacity-80"
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center">
                         <div className="text-center text-white px-4">
                             <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3">
                                 {slide.title}

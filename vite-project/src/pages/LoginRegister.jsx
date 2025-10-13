@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Eye, EyeOff, Mail, Lock, Building, User, Phone } from 'lucide-react';
@@ -78,6 +78,10 @@ export default function AuthHeroPage() {
         });
     };
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    });
+
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex items-center justify-center px-4">
             {/* Animated Background */}
@@ -122,7 +126,7 @@ export default function AuthHeroPage() {
                         {/* Header */}
                         <div className="text-center mb-8">
                             <div className='flex justify-center mb-4'>
-                                <img src="WholseraLogo.png" alt="Logo" className='w-20' />
+                                <img src="WholseraLogo.pnge" alt="Logo" className='w-20' />
                             </div>
                             <h2 className="text-3xl font-bold mb-2">
                                 {isLogin ? 'Welcome Back' : 'Create Account'}

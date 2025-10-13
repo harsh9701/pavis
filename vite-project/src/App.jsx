@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import './App.css';
 import axios from "axios";
+import { Toaster } from "react-hot-toast";
 
 import LoadingScreen from "./components/LoadingScreen";
 import AdminLayout from "./components/AdminLayout";
@@ -26,6 +27,7 @@ axios.defaults.withCredentials = true;
 function App() {
   return (
     <Suspense fallback={<LoadingScreen />}>
+      <Toaster position="bottom-right" reverseOrder={false} />
       <Routes>
 
         {/* Public routes */}
