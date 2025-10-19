@@ -11,8 +11,8 @@ export default function ProductCard({ freshProducts }) {
         navigate(`/product/${product._id}`);
     };
 
-    const handleAddToCart = (productId, moq) => {
-        addToCart(productId, moq);
+    const handleAddToCart = (product, moq) => {
+        addToCart(product, moq);
     };
 
     return (
@@ -41,7 +41,7 @@ export default function ProductCard({ freshProducts }) {
                                 <Eye className="w-3 h-3 md:w-4 md:h-4 text-gray-900 cursor-pointer" />
                             </button>
                             <button
-                                onClick={() => handleAddToCart(product._id, product.minimumOrderQuantity)}
+                                onClick={() => handleAddToCart(product, product.minimumOrderQuantity)}
                                 className="bg-gradient-to-r from-orange-500 to-pink-500 p-1.5 md:p-2.5 rounded-full hover:scale-110 transition-all duration-200 shadow-lg cursor-pointer"
                                 aria-label="Add to cart"
                             >
@@ -82,7 +82,7 @@ export default function ProductCard({ freshProducts }) {
                                 <span className="hidden sm:inline">View</span>
                             </button>
                             <button
-                                onClick={() => handleAddToCart(product._id, product.minimumOrderQuantity)}
+                                onClick={() => handleAddToCart(product, product.minimumOrderQuantity)}
                                 className="flex-1 flex items-center justify-center gap-1 md:gap-2 bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 text-white py-2 md:py-2.5 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm hover:shadow-lg hover:shadow-purple-500/50 hover:scale-[1.02] transition-all duration-300 group/btn cursor-pointer"
                             >
                                 <ShoppingCart className="w-3 h-3 md:w-4 md:h-4 group-hover/btn:scale-110 transition-transform" />

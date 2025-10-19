@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const upload = require("../config/multer");
-const { addProduct, deleteProduct, updateProduct, updateProductStatus, getProducts, newArrivals, addToCart } = require("../controllers/product.controller");
+const { addProduct, deleteProduct, updateProduct, updateProductStatus, getProducts, newArrivals, addToCart, removeFromCart, updateCartQuantity } = require("../controllers/product.controller");
 const { authUser } = require("../middlewares/auth.middleware");
 
 router.get("/", getProducts);
@@ -13,6 +13,10 @@ router.post("/new", authUser, upload.fields([
 ]), addProduct);
 
 router.post("/addToCart", authUser, addToCart);
+
+router.post("/removeFromCart", authUser, removeFromCart);
+
+router.post("/updateCartQuantity", authUser, updateCartQuantity);
 
 router.delete("/delete/:id", authUser, deleteProduct);
 

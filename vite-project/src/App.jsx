@@ -4,11 +4,11 @@ import './App.css';
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
 
-import LoadingScreen from "./components/LoadingScreen";
 import AdminLayout from "./components/AdminLayout";
-import UserLayout from "./components/UserLayout";
 import AdminProtectedRoute from "./pages/AdminProtectedRoute";
 import ErrorPage from "./pages/ErrorPage";
+import LoadingScreen from "./components/LoadingScreen";
+import UserLayout from "./components/UserLayout";
 
 // ✅ Lazy load all page components
 const Home = lazy(() => import("./pages/Home"));
@@ -20,6 +20,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ManageProducts = lazy(() => import("./pages/ManageProducts"));
 const ManageCustomers = lazy(() => import("./pages/ManageCustomer"));
 const ManageCategories = lazy(() => import("./pages/Categories"));
+const CartPage = lazy(() => import("./pages/CartPage"));
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -33,6 +34,7 @@ function App() {
         {/* Public routes */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/view-product" element={<ProductPage />} />
           <Route path="/explore" element={<ExploreProducts />} />

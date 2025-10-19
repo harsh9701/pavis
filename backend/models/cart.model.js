@@ -13,6 +13,22 @@ const cartSchema = new mongoose.Schema(
                     ref: "Product",
                     required: true,
                 },
+                productName: {
+                    type: String,
+                    required: true
+                },
+                unitPrice: {
+                    type: Number,
+                    required: true
+                },
+                minimumOrderQuantity: {
+                    type: Number,
+                    required: true
+                },
+                mainImage: {
+                    type: String,
+                    required: true
+                },
                 quantity: {
                     type: Number,
                     required: true,

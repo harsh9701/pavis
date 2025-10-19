@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const userModel = require("../models/user.model");
+const cartModel = require("../models/cart.model");
 const { createUser } = require("../services/user.service");
 const blacklistTokenModel = require("../models/blacklistToken.model");
 
@@ -118,3 +119,18 @@ module.exports.logoutUser = async (req, res) => {
 
     return res.status(200).json({ message: "Logout user" });
 };
+
+module.exports.cartData = async (req, res) => {
+    try {
+        const cartData = await cartModel.findOne({ userId: req.user._id })
+            .lean();
+
+        if (!cartData) {
+            return res.status(200).json({ status: false, cart: [] });
+        }
+
+        return res.status(200).json({ status: true, cart: cartData ? cartData : [] });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: err.message });
+    }
+}

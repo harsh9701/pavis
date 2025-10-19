@@ -16,7 +16,6 @@ export const CartProvider = ({ children }) => {
     const [cartCount, setCartCount] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    // Load cart from backend on mount (if user is logged in)
     useEffect(() => {
         const fetchCart = async () => {
             if (!user) {
@@ -25,10 +24,9 @@ export const CartProvider = ({ children }) => {
             }
 
             try {
-                const res = await axios.get("/api/cart");
-                if (res.data && res.data.products) {
-                    setCart(res.data.products);
-                    setCartCount(res.data.products.length);
+                const res = await axios.get("/users/cartData");
+                if (res.data && res.data.cart) {
+                    setCart(res.data.cart.items);
                 }
             } catch (err) {
                 console.error("Failed to fetch cart:", err);
@@ -41,38 +39,37 @@ export const CartProvider = ({ children }) => {
     }, []);
 
     // Add product to cart
-    const addToCart = async (productId, quantity) => {
+    const addToCart = async (product, quantity) => {
         if (!user) {
             navigate("/login");
             return;
         }
 
-        const existingProductIndex = cart.findIndex(item => item.productId === productId);
-
-        let updatedCart;
-
-        if (existingProductIndex !== -1) {
-            updatedCart = cart.map((item, index) =>
-                index === existingProductIndex
-                    ? { ...item, quantity: item.quantity + quantity }
-                    : item
-            );
-        } else {
-            updatedCart = [...cart, { productId, quantity }];
+        const cartData = {
+            productId: product._id,
+            productName: product.productName,
+            unitPrice: product.unitPrice,
+            minimumOrderQuantity: product.minimumOrderQuantity,
+            mainImage: product.mainImage,
+            quantity
         }
-
-        setCart(updatedCart);
-        setCartCount(updatedCart.length);
 
         try {
             await toast.promise(
-                axios.post(`/product/addToCart`, { cart: updatedCart }),
+                axios.post(`/product/addToCart`, { cart: cartData }),
                 {
                     loading: "Adding to Cart...",
-                    success: existingProductIndex !== -1 ? "Quantity updated!" : "Added to cart!",
+                    success: "Added to cart!",
                     error: "Failed to Add to Cart ❌",
                 }
-            );
+            ).then((response) => {
+                if (response.status === 200) {
+                    setCart(response.data.cart.items);
+                }
+            })
+                .catch((error) => {
+                    console.error("Error updating product:", error);
+                });
         } catch (err) {
             console.error("Failed to update cart on backend:", err);
         }
@@ -80,18 +77,22 @@ export const CartProvider = ({ children }) => {
 
     // Remove product from cart
     const removeFromCart = async (productId) => {
-        setCart((prev) => prev.filter((item) => item._id !== productId));
-        setCartCount((prev) => Math.max(prev - 1, 0));
-
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
         try {
-            await axios.post(
-                "/api/cart/remove",
-                { productId },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            await toast.promise(
+                axios.post(`/product/removeFromCart`, { productId }),
+                {
+                    loading: "Removing from Cart...",
+                    success: "Removed!",
+                    error: "Failed to remove from Cart ❌",
+                }
+            ).then((response) => {
+                if (response.status === 200) {
+                    setCart(response.data.cart.items);
+                }
+            })
+                .catch((error) => {
+                    console.error("Error updating product:", error);
+                });
         } catch (err) {
             console.error("Failed to remove from cart on backend:", err);
         }
@@ -99,7 +100,7 @@ export const CartProvider = ({ children }) => {
 
     return (
         <CartContext.Provider
-            value={{ cart, addToCart, removeFromCart, cartCount, loading }}
+            value={{ cart, setCart, addToCart, removeFromCart, cartCount, loading }}
         >
             {children}
         </CartContext.Provider>
