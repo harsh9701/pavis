@@ -290,4 +290,17 @@ module.exports.updateCartQuantity = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Server error" });
     }
-}
+};
+
+module.exports.getProductDetail = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const product = await productModel.findById(productId);
+        if (!product) {
+            return res.status(404).json({ status: false, message: "Product Not found" });
+        }
+        return res.status(200).json({ status: true, productData: product });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+};

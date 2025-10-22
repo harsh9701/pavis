@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart, User, Menu, X, ArrowLeft } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Header() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -10,6 +11,7 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
+    const { cart, setCart } = useCart();
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -20,9 +22,11 @@ export default function Header() {
     const handleLogout = async () => {
         try {
             const response = await logout();
-            if (response === 200) navigate("/");
+            if (response.status === 200) {
+                setCart([]);
+                navigate("/");
+            }
         } catch (err) {
-            console.log(err);
             navigate("/");
         }
     };

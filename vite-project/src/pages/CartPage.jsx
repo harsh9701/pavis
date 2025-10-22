@@ -12,12 +12,17 @@ export default function CartPage() {
 
     useEffect(() => {
         fetchCartData();
+        window.scrollTo(0, 0);
     }, []);
 
     const fetchCartData = async () => {
         try {
             const response = await axios.get("/users/cartData");
-            setCart(response.data.cart.items);
+            if (response.data.cart.items) {
+                setCart(response.data.cart.items);
+            } else {
+                setCart([]);
+            }
         } catch (err) {
 
         }
@@ -77,7 +82,7 @@ export default function CartPage() {
     };
 
     const subtotal = cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-    const shipping = subtotal > 5000 ? 0 : 99;
+    const shipping = subtotal > 5000 ? 0 : 500;
     const total = subtotal + shipping;
 
     return (
@@ -95,8 +100,8 @@ export default function CartPage() {
                             Shopping Cart
                         </h1>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-400">
-                        <ShoppingBag size={24} />
+                    <div className="flex items-center text-[0.8rem] md:text-[1rem] gap-2 bg-gray-800/60 px-4 py-2 rounded-full border border-gray-700/40">
+                        <ShoppingBag size={20} className="text-orange-400" />
                         <span className="font-semibold">{cart.length} Items</span>
                     </div>
                 </div>
@@ -229,9 +234,11 @@ export default function CartPage() {
                                     </div>
                                 )}
 
-                                <button className="w-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:shadow-lg hover:shadow-purple-500/50 text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 mb-4 cursor-pointer">
-                                    Proceed to Checkout
-                                </button>
+                                <Link to="/checkout">
+                                    <button className="w-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 hover:shadow-lg hover:shadow-purple-500/50 text-white py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 mb-4 cursor-pointer">
+                                        Proceed to Checkout
+                                    </button>
+                                </Link>
 
                                 <button className="w-full bg-gradient-to-br from-gray-800 to-gray-700 text-gray-300 hover:from-gray-700 hover:to-gray-600 border border-gray-700/50 py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer">
                                     Continue Shopping

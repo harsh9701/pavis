@@ -27,8 +27,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        await axios.get("/users/logout", {}, { withCredentials: true });
+        const response = await axios.get("/users/logout", {}, { withCredentials: true });
         setUser(null);
+        return response;
     };
 
     return (

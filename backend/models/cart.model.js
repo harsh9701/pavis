@@ -21,6 +21,14 @@ const cartSchema = new mongoose.Schema(
                     type: Number,
                     required: true
                 },
+                taxRate: {
+                    type: Number,
+                    required: true
+                },
+                taxType: {
+                    type: String,
+                    required: true
+                },
                 minimumOrderQuantity: {
                     type: Number,
                     required: true

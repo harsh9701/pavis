@@ -50,6 +50,8 @@ export const CartProvider = ({ children }) => {
             productName: product.productName,
             unitPrice: product.unitPrice,
             minimumOrderQuantity: product.minimumOrderQuantity,
+            taxRate: product.taxRate,
+            taxType: product.taxType,
             mainImage: product.mainImage,
             quantity
         }

@@ -38,7 +38,7 @@ export default function AuthHeroPage() {
                 if (response.status === 200) {
                     toast.success("Login Successful 🎉");
                     login(data);
-                    setTimeout(() => navigate("/add-product"), 1500);
+                    setTimeout(() => navigate("/"), 1500);
                 }
             } else {
                 const response = await axios.post(`/users/register`, formData);
@@ -46,7 +46,7 @@ export default function AuthHeroPage() {
                 if (response.status === 200) {
                     toast.success("Account Created Successfully 🎊");
                     login(data);
-                    setTimeout(() => navigate("/add-product"), 1500);
+                    setTimeout(() => navigate("/"), 1500);
                 }
             }
         } catch (error) {
@@ -126,7 +126,7 @@ export default function AuthHeroPage() {
                         {/* Header */}
                         <div className="text-center mb-8">
                             <div className='flex justify-center mb-4'>
-                                <img src="WholseraLogo.pnge" alt="Logo" className='w-20' />
+                                <img src="WholseraLogo.png" alt="Logo" className='w-20' />
                             </div>
                             <h2 className="text-3xl font-bold mb-2">
                                 {isLogin ? 'Welcome Back' : 'Create Account'}
