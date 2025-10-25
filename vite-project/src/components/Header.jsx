@@ -63,9 +63,9 @@ export default function Header() {
                     <div className="hidden md:flex items-center space-x-6">
                         <Link to="/cart" className="relative">
                             <ShoppingCart className="text-yellow-400 hover:text-yellow-300 transition" size={24} />
-                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+                            {/* <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
                                 7
-                            </span>
+                            </span> */}
                         </Link>
 
                         {user ? (
