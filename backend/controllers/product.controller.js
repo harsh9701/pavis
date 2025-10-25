@@ -1,6 +1,7 @@
 const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
 const productModel = require("../models/product.model");
 const cartModel = require("../models/cart.model");
+const mongoose = require("mongoose");
 
 module.exports.addProduct = async (req, res) => {
 
@@ -301,6 +302,30 @@ module.exports.getProductDetail = async (req, res) => {
         }
         return res.status(200).json({ status: true, productData: product });
     } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+};
+
+module.exports.getProductsByCategory = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+
+        if (!mongoose.Types.ObjectId.isValid(categoryId)) {
+            return res.status(400).json({ status: false, message: "Invalid category ID" });
+        }
+
+        const products = await productModel
+            .find({ category: categoryId })
+            .select("productName unitPrice minimumOrderQuantity mainImage taxType taxRate")
+            .populate("category", "name");
+
+        if (products.length === 0) {
+            return res.status(404).json({ status: false, message: "No products found in this category" });
+        }
+
+        return res.status(200).json({ status: true, products });
+    } catch (err) {
+        console.error(err);
         return res.status(500).json({ status: false, message: "Internal Server Error" });
     }
 };

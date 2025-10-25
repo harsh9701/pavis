@@ -1,8 +1,10 @@
 const { validationResult } = require("express-validator");
 const userModel = require("../models/user.model");
+const orderModel = require("../models/order.model");
 const cartModel = require("../models/cart.model");
 const { createUser } = require("../services/user.service");
 const blacklistTokenModel = require("../models/blacklistToken.model");
+const { generateOrderNumber } = require("../utils/helper");
 
 module.exports.registerUser = async (req, res) => {
     try {
@@ -134,3 +136,71 @@ module.exports.cartData = async (req, res) => {
         return res.status(500).json({ status: false, message: err.message });
     }
 }
+
+module.exports.createOrder = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orderData = req.body;
+        const orderNumber = generateOrderNumber();
+
+        if (!orderData.cart || orderData.cart.length === 0) {
+            return res.status(400).json({ message: "Cart cannot be empty" });
+        }
+
+        const generateOrderItems = (cart) => {
+            return cart.map(item => {
+                const itemTotal = item.unitPrice * item.quantity;
+
+                // Calculate tax
+                let taxAmount = 0;
+                if (item.taxType === 'exclusive') {
+                    taxAmount = (item.taxRate / 100) * itemTotal;
+                } else if (item.taxType === 'inclusive') {
+                    taxAmount = (item.taxRate / (100 + item.taxRate)) * itemTotal;
+                }
+
+                return {
+                    productId: item.productId,
+                    productName: item.productName,
+                    unitPrice: item.unitPrice,
+                    taxRate: item.taxRate,
+                    taxType: item.taxType,
+                    mainImage: item.mainImage,
+                    taxAmount: parseFloat(taxAmount.toFixed(2)),
+                    quantity: item.quantity,
+                    total: parseFloat((itemTotal + taxAmount).toFixed(2)),
+                };
+            });
+        };
+
+        const orderItems = generateOrderItems(orderData.cart);
+
+        const order = await orderModel.create({
+            userId,
+            orderNumber,
+            orderItems,
+            grandTotal: orderData.total,
+            shippingAddress: orderData.address,
+        });
+
+        if (!order) {
+            return res.status(400).json({ status: false, message: "Order not created" });
+        }
+
+        await cartModel.deleteOne({ userId });
+
+        return res.status(200).json({ status: true, message: "Order Created Successfully", orderNumber });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+};
+
+module.exports.getOrderDetail = async (req, res) => {
+    try {
+        const orderNumber = req.query.orderNumber;
+        const order = await orderModel.find({ orderNumber });
+        return res.status(200).json({ status: true, order: order[0] });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal Server Error" });
+    }
+};

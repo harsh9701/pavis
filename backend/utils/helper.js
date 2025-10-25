@@ -41,5 +41,20 @@ const deleteFromFirebase = async (fileUrl) => {
     }
 };
 
+const generateOrderNumber = () => {
+    const prefix = "SERA"; //
+    const date = new Date();
 
-module.exports = { uploadBase64ToFirebase, deleteFromFirebase };
+    // Format: YYYYMMDD
+    const formattedDate = date
+        .toISOString()
+        .slice(0, 10)
+        .replace(/-/g, "");
+
+    // Generate a 4-digit random number
+    const randomPart = Math.floor(10000 + Math.random() * 90000);
+
+    return `${prefix}${formattedDate}${randomPart}`;
+}
+
+module.exports = { uploadBase64ToFirebase, deleteFromFirebase, generateOrderNumber };

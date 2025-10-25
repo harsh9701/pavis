@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import axios from "axios";
 import {
     ArrowLeft,
     ShoppingCart,
@@ -18,6 +19,7 @@ export default function ProductView() {
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(6);
     const [selectedImage, setSelectedImage] = useState("");
+    const { addToCart } = useCart();
 
     useEffect(() => {
         const fetchProductDetail = async () => {
@@ -61,6 +63,10 @@ export default function ProductView() {
         return total;
     };
 
+    const handleAddToCart = (product, moq) => {
+        addToCart(product, quantity);
+    };
+
     return (
         <div className="min-h-screen bg-black text-white overflow-hidden">
             {/* Background */}
@@ -78,8 +84,8 @@ export default function ProductView() {
                 {/* Images Top */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Main Image */}
-                    <div className="space-y-6 mt-8">
-                        <div className="relative w-full h-130 rounded-2xl overflow-hidden border border-gray-700 mb-4 aspect-square sm:aspect-[16/9]">
+                    <div className="space-y-6 mt-10">
+                        <div className="relative w-full h-85 sm:h-110 md:h-130 rounded-2xl overflow-hidden border border-gray-700 mb-4 aspect-square sm:aspect-[16/9]">
                             <img
                                 src={selectedImage}
                                 alt={product.productName}
@@ -113,7 +119,7 @@ export default function ProductView() {
                         </div>
                     </div>
 
-                    <div className="space-y-6 mt-8">
+                    <div className="space-y-6 mt-[-22px] md:mt-8">
                         <div>
                             <h1 className="text-3xl sm:text-4xl font-black mb-3 leading-tight">
                                 {product.productName}
@@ -173,7 +179,7 @@ export default function ProductView() {
                                 <label className="block text-sm font-semibold text-gray-400 mb-3">
                                     Select Quantity
                                 </label>
-                                <div className="flex items-center gap-3 mb-4">
+                                <div className="flex flex-wrap justify-center items-center gap-3 mb-4">
                                     <button
                                         onClick={decrementQuantity}
                                         disabled={quantity <= product.minimumOrderQuantity}
@@ -201,7 +207,7 @@ export default function ProductView() {
                                         <Plus size={18} />
                                     </button>
 
-                                    <button className="group relative flex-1 px-6 py-4 rounded-xl font-bold overflow-hidden cursor-pointer">
+                                    <button onClick={() => handleAddToCart(product, quantity)} className="group relative flex-1 px-6 py-4 rounded-xl font-bold overflow-hidden cursor-pointer min-w-[200px]">
                                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 transition-transform group-hover:scale-105"></div>
                                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 blur-xl opacity-40"></div>
                                         <span className="relative flex items-center justify-center">

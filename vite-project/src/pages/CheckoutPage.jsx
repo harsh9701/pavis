@@ -11,15 +11,50 @@ export default function CheckoutPage() {
     const [address, setAddress] = useState({
         fullName: "",
         phone: "",
-        street: "",
+        fullAddress: "",
         city: "",
         state: "",
         pincode: "",
     });
 
     useEffect(() => {
+        fetchCartData();
         window.scrollTo(0, 0);
-    });
+    }, []);
+
+    const fetchCartData = async () => {
+        try {
+            const response = await axios.get("/users/cartData");
+            if (response.data.cart.items) {
+                setCart(response.data.cart.items);
+            } else {
+                setCart([]);
+            }
+        } catch (err) { }
+    }
+
+    // ✅ Validation helpers
+    const isValidPincode = (pincode) => {
+        return /^[1-9][0-9]{5}$/.test(pincode); // Must be 6 digits and not start with 0
+    };
+
+    const isValidPhone = (phone) => {
+        // Must start with 6–9, be 10 digits, and not all same digits
+        return /^[6-9]\d{9}$/.test(phone) && !/^(\d)\1{9}$/.test(phone);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // ✅ Restrict only phone and pincode inputs
+        if (name === "phone") {
+            if (/^\d{0,10}$/.test(value)) setAddress({ ...address, [name]: value });
+        } else if (name === "pincode") {
+            if (/^\d{0,6}$/.test(value)) setAddress({ ...address, [name]: value });
+        } else {
+            setAddress({ ...address, [name]: value });
+        }
+    };
 
     // Calculate item total with tax
     const calculateItemTotal = (item) => {
@@ -42,16 +77,11 @@ export default function CheckoutPage() {
     const shipping = subtotal > 5000 ? 0 : 500;
     const total = subtotal + shipping;
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setAddress({ ...address, [name]: value });
-    };
-
     const handlePayment = async () => {
         if (
             !address.fullName ||
             !address.phone ||
-            !address.street ||
+            !address.fullAddress ||
             !address.city ||
             !address.state ||
             !address.pincode
@@ -60,18 +90,35 @@ export default function CheckoutPage() {
             return;
         }
 
-        toast.promise(
-            axios.post("/order/create", { address, cart, total }),
-            {
-                loading: "Processing payment...",
-                success: "Order placed successfully ✅",
-                error: "Payment failed ❌",
-            }
-        );
+        if (!isValidPhone(address.phone)) {
+            toast.error("Invalid phone number. Must be 10 digits and start with 6–9.");
+            return;
+        }
 
-        // Clear cart (optional)
-        setCart([]);
-        navigate("/order-success");
+        if (!isValidPincode(address.pincode)) {
+            toast.error("Invalid pincode. Must be a 6-digit number and not start with 0.");
+            return;
+        }
+
+        try {
+            toast.promise(
+                axios.post("/users/createOrder", { address, cart, total }),
+                {
+                    loading: "Processing payment...",
+                    success: "Order placed successfully ✅",
+                    error: "Order not placed❌",
+                }
+            ).then((res) => {
+                const orderNumber = res.data.orderNumber;
+
+                // Clear cart (optional)
+                setCart([]);
+                navigate(`/order-success/${orderNumber}`);
+            })
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to place order");
+            console.error("Error updating product:", error);
+        }
     };
 
     return (
@@ -120,13 +167,15 @@ export default function CheckoutPage() {
                                     value={address.phone}
                                     onChange={handleChange}
                                     placeholder="Phone Number"
+                                    inputMode="numeric"
+                                    maxLength={10}
                                     className="p-4 rounded-xl bg-gray-900/80 border border-gray-700/40 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 transition-all placeholder:text-gray-500"
                                 />
                                 <input
-                                    name="street"
-                                    value={address.street}
+                                    name="fullAddress"
+                                    value={address.fullAddress}
                                     onChange={handleChange}
-                                    placeholder="Street Address"
+                                    placeholder="Full Address"
                                     className="p-4 rounded-xl bg-gray-900/80 border border-gray-700/40 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 transition-all md:col-span-2 placeholder:text-gray-500"
                                 />
                                 <input
@@ -148,6 +197,8 @@ export default function CheckoutPage() {
                                     value={address.pincode}
                                     onChange={handleChange}
                                     placeholder="Pincode"
+                                    inputMode="numeric"
+                                    maxLength={6}
                                     className="p-4 rounded-xl bg-gray-900/80 border border-gray-700/40 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 transition-all md:col-span-2 placeholder:text-gray-500"
                                 />
                             </div>

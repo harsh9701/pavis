@@ -77,21 +77,23 @@ export default function WholseraHomepage() {
                 <div className="overflow-x-auto no-scrollbar">
                     <div className="flex gap-4 justify-start sm:justify-center w-max sm:w-full">
                         {categories.map((cat, i) => (
-                            <div
-                                key={i}
-                                className="flex flex-col items-center flex-shrink-0 cursor-pointer transition-transform"
-                            >
-                                <div className="w-22 h-22 lg:w-28 lg:h-28 rounded-full overflow-hidden shadow-lg">
-                                    <img
-                                        src={cat.imageUrl}
-                                        alt={cat.name}
-                                        className="w-full h-full object-cover"
-                                    />
+                            <Link key={i} to={`/shop-by-category/${cat._id}`}>
+                                <div
+                                    key={i}
+                                    className="flex flex-col items-center flex-shrink-0 cursor-pointer transition-transform"
+                                >
+                                    <div className="w-22 h-22 lg:w-28 lg:h-28 rounded-full overflow-hidden shadow-lg">
+                                        <img
+                                            src={cat.imageUrl}
+                                            alt={cat.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <span className="mt-2 text-sm font-semibold text-white text-center">
+                                        {cat.name}
+                                    </span>
                                 </div>
-                                <span className="mt-2 text-sm font-semibold text-white text-center">
-                                    {cat.name}
-                                </span>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
