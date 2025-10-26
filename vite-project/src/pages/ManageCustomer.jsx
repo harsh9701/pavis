@@ -34,9 +34,9 @@ const ManageCustomers = () => {
     const navigationItems = [
         { name: 'Dashboard', icon: TrendingUp, path: "/admin" },
         { name: 'Add Product', icon: Plus, path: "/add-product" },
-        { name: 'Manage Products', icon: Package, path: "/manage-products" },
-        { name: 'Manage Customers', icon: Users, active: true, path: "/manage-customers" },
-        { name: 'Manage Categories', icon: LayoutGrid, path: "/manage-categories" },
+        { name: 'Products', icon: Package, path: "/manage-products" },
+        { name: 'Customers', icon: Users, active: true, path: "/manage-customers" },
+        { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
         { name: 'Settings', icon: Settings, path: "/admin-setting" }
     ];

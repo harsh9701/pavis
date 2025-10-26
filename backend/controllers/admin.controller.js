@@ -1,5 +1,6 @@
 const userModel = require("../models/user.model");
 const categoryModel = require("../models/category.model");
+const orderModel = require("../models/order.model");
 const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
 
 module.exports.getCustomers = async (req, res) => {
@@ -129,5 +130,37 @@ module.exports.deleteSubcategory = async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({ status: false, message: true });
+    }
+};
+
+module.exports.getOrders = async (req, res) => {
+    try {
+        const ordersData = await orderModel.find({})
+            .select("orderNumber createdAt grandTotal status orderItems")
+            .populate({
+                path: "userId",
+                select: "fullName email contactNo _id"
+            })
+            .lean();
+
+        const orders = ordersData.map(order => ({
+            orderId: order._id,
+            orderNumber: order.orderNumber,
+            createdAt: order.createdAt,
+            grandTotal: order.grandTotal,
+            status: order.status,
+            fullName: order.userId.fullName,
+            email: order.userId.email,
+            contactNo: order.userId.contactNo,
+            userId: order.userId._id,
+            orderItemsCount: order.orderItems.length
+        }));
+
+        console.log(orders);
+
+        return res.status(200).json({ status: true, orders });
+    } catch (err) {
+        console.log(err.message);
+        return res.status(500).json({ status: false, message: "Internal server error" });
     }
 }

@@ -18,12 +18,14 @@ const AddProduct = lazy(() => import("./pages/AddProduct"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const ManageProducts = lazy(() => import("./pages/ManageProducts"));
 const ManageCustomers = lazy(() => import("./pages/ManageCustomer"));
-const ManageCategories = lazy(() => import("./pages/Categories"));
+const ManageCategories = lazy(() => import("./pages/ManageCategories"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const CheckoutPage = lazy(() => import("./pages/CheckoutPage"));
 const ViewProductPage = lazy(() => import("./pages/ViewProductPage"));
 const ShopByCategory = lazy(() => import("./pages/ShopByCategory"));
 const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+const CustomerProfile = lazy(() => import("./pages/CustomerProfile"));
+const ManageOrders = lazy(() => import("./pages/ManageOrders"));
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 axios.defaults.withCredentials = true;
@@ -42,6 +44,7 @@ function App() {
           <Route path="/explore" element={<ExploreProducts />} />
           <Route path="/login" element={<LoginRegister />} />
           <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
+          <Route path="/profile" element={<CustomerProfile />} />
           <Route path="/product/:id" element={<ViewProductPage />} />
           <Route path="/shop-by-category/:id" element={<ShopByCategory />} />
         </Route>
@@ -85,6 +88,15 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <ManageCategories />
+              </AdminProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/manage-orders"
+            element={
+              <AdminProtectedRoute>
+                <ManageOrders />
               </AdminProtectedRoute>
             }
           />

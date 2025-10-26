@@ -80,7 +80,7 @@ export default function AuthHeroPage() {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-    });
+    }, []);
 
     return (
         <div className="min-h-screen bg-black text-white relative overflow-hidden flex items-center justify-center px-4">
