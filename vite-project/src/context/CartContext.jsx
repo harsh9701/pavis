@@ -41,6 +41,7 @@ export const CartProvider = ({ children }) => {
     // Add product to cart
     const addToCart = async (product, quantity) => {
         if (!user) {
+            toast.error("You need to login");
             navigate("/login");
             return;
         }

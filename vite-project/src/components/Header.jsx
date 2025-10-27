@@ -122,17 +122,17 @@ export default function Header() {
                             </Link>
 
                             {/* User Icon with Dropdown Menu */}
-                            <div className="relative" ref={userMenuRef}>
-                                <User
-                                    className="text-yellow-400 hover:text-yellow-300 transition cursor-pointer"
-                                    size={24}
-                                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                                />
+                            {user && (
+                                <div className="relative" ref={userMenuRef}>
+                                    <User
+                                        className="text-yellow-400 hover:text-yellow-300 transition cursor-pointer"
+                                        size={24}
+                                        onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                    />
 
-                                {userMenuOpen && (
-                                    <div className="absolute right-0 mt-3 w-56 bg-gradient-to-br from-[#1e2761] to-[#240046] border border-purple-500/30 rounded-2xl shadow-2xl overflow-hidden">
-                                        <div className="py-2">
-                                            {user && (
+                                    {userMenuOpen && (
+                                        <div className="absolute right-0 mt-3 w-56 bg-gradient-to-br from-[#1e2761] to-[#240046] border border-purple-500/30 rounded-2xl shadow-2xl overflow-hidden">
+                                            <div className="py-2">
                                                 <Link
                                                     to="/profile"
                                                     className="flex items-center space-x-3 px-4 py-3 text-gray-200 hover:bg-white/10 transition"
@@ -144,42 +144,31 @@ export default function Header() {
                                                     />
                                                     <span className="font-medium">Profile</span>
                                                 </Link>
-                                            )}
-                                            {user?.role === "admin" && (
-                                                <Link
-                                                    to="/admin"
-                                                    className="flex items-center space-x-3 px-4 py-3 text-gray-200 hover:bg-white/10 transition"
-                                                    onClick={() => setUserMenuOpen(false)}
-                                                >
-                                                    <UserCircle
-                                                        size={20}
-                                                        className="text-yellow-400"
-                                                    />
-                                                    <span className="font-medium">
-                                                        Admin Panel
-                                                    </span>
-                                                </Link>
-                                            )}
-                                            <Link
-                                                to="/settings"
-                                                className="flex items-center space-x-3 px-4 py-3 text-gray-200 hover:bg-white/10 transition"
-                                                onClick={() => setUserMenuOpen(false)}
-                                            >
-                                                <Settings
-                                                    size={20}
-                                                    className="text-yellow-400"
-                                                />
-                                                <span className="font-medium">Settings</span>
-                                            </Link>
+                                                {user?.role === "admin" && (
+                                                    <Link
+                                                        to="/admin"
+                                                        className="flex items-center space-x-3 px-4 py-3 text-gray-200 hover:bg-white/10 transition"
+                                                        onClick={() => setUserMenuOpen(false)}
+                                                    >
+                                                        <UserCircle
+                                                            size={20}
+                                                            className="text-yellow-400"
+                                                        />
+                                                        <span className="font-medium">
+                                                            Admin Panel
+                                                        </span>
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
+                                    )}
+                                </div>
+                            )}
 
                             {user ? (
                                 <button
                                     onClick={handleLogout}
-                                    className="flex w-32 justify-between bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition"
+                                    className="flex w-32 justify-between bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition cursor-pointer"
                                 >
                                     <User size={22} />
                                     <span>Logout</span>
@@ -257,15 +246,6 @@ export default function Header() {
                             </Link>
 
                             <Link
-                                to="/settings"
-                                className="flex items-center space-x-3 px-4 py-3 text-gray-200 hover:bg-white/10 rounded-lg transition font-medium"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                <Settings size={22} className="text-yellow-400" />
-                                <span>Settings</span>
-                            </Link>
-
-                            <Link
                                 to="/cart"
                                 className="flex items-center justify-between px-4 py-3 text-gray-200 hover:bg-white/10 rounded-lg transition font-medium"
                                 onClick={() => setMenuOpen(false)}
@@ -275,6 +255,19 @@ export default function Header() {
                                     <span>Shopping Cart</span>
                                 </div>
                             </Link>
+
+                            {user?.role === "admin" && (
+                                <Link
+                                    to="/admin"
+                                    className="flex items-center justify-between px-4 py-3 text-gray-200 hover:bg-white/10 rounded-lg transition font-medium"
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    <div className="flex items-center space-x-3">
+                                        <ShoppingCart size={22} className="text-yellow-400" />
+                                        <span>Admin Dashboard</span>
+                                    </div>
+                                </Link>
+                            )}
 
                             <div className="border-t border-purple-500/30 my-4"></div>
 

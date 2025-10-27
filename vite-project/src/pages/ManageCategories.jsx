@@ -13,10 +13,10 @@ import {
     Package,
     Users,
     ShoppingCart,
-    Settings,
     Menu,
     UserCheck,
-    LayoutGrid
+    LayoutGrid,
+    Earth
 } from 'lucide-react';
 import axios from "axios";
 
@@ -39,7 +39,7 @@ const ManageCategories = () => {
         { name: 'Customers', icon: Users, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, active: true, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
 
     // Fetch categories on component mount

@@ -5,19 +5,16 @@ import {
     Plus,
     X,
     Edit,
-    Trash2,
     Package,
-    Settings,
+    Earth,
     Menu,
     TrendingUp,
-    UserCheck,
     Search,
     Users,
     ShoppingCart,
     Eye,
     Calendar,
     LayoutGrid,
-    Filter,
     Download,
     CheckCircle,
     Clock,
@@ -37,6 +34,11 @@ const ManageOrders = () => {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [showItemsModal, setShowItemsModal] = useState(false);
+    const [itemsLoading, setItemsLoading] = useState(false);
+    const [orderItems, setOrderItems] = useState([]);
+    const [showImagePreview, setShowImagePreview] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
 
     const navigationItems = [
         { name: 'Dashboard', icon: TrendingUp, path: "/admin" },
@@ -45,13 +47,12 @@ const ManageOrders = () => {
         { name: 'Customers', icon: Users, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, active: true, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
 
     const orderStatuses = [
         { value: 'pending', label: 'Pending', color: 'yellow', icon: Clock },
         { value: 'confirmed', label: 'Confirmed', color: 'blue', icon: CheckCircle },
-        { value: 'processing', label: 'Processing', color: 'purple', icon: Package },
         { value: 'shipped', label: 'Shipped', color: 'indigo', icon: Truck },
         { value: 'delivered', label: 'Delivered', color: 'green', icon: CheckCircle },
         { value: 'cancelled', label: 'Cancelled', color: 'red', icon: XCircle }
@@ -84,7 +85,7 @@ const ManageOrders = () => {
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             setUpdatingStatus(true);
-            const response = await axios.patch(`/admin/orders/${orderId}/status`, {
+            const response = await axios.post(`/admin/orders/updateStatus/${orderId}`, {
                 status: newStatus
             });
 
@@ -149,9 +150,9 @@ const ManageOrders = () => {
     // Filter orders based on search term and filters
     const filteredOrders = orders.filter(order => {
         const matchesSearch =
-            order.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.customer?.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.customer?.email?.toLowerCase().includes(searchTerm.toLowerCase());
+            order.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            order.status?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
 
@@ -183,9 +184,26 @@ const ManageOrders = () => {
     const stats = {
         total: orders.length,
         pending: orders.filter(o => o.status === 'pending').length,
-        processing: orders.filter(o => o.status === 'processing').length,
+        confirmed: orders.filter(o => o.status === 'confirmed').length,
+        shipped: orders.filter(o => o.status === 'shipped').length,
         delivered: orders.filter(o => o.status === 'delivered').length,
         totalRevenue: orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0)
+    };
+
+    const viewOrderItems = async () => {
+        try {
+            setItemsLoading(true);
+            const response = await axios.get(`/admin/orders/orderItems/${selectedOrder.orderId}`);
+            if (response.status === 200) {
+                setOrderItems(response.data.items);
+                setShowItemsModal(true);
+            }
+        } catch (error) {
+            console.error("Error fetching order items:", error);
+            toast.error("Failed to load order items");
+        } finally {
+            setItemsLoading(false);
+        }
     };
 
     return (
@@ -286,10 +304,20 @@ const ManageOrders = () => {
                             <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-gray-400">Processing</p>
-                                        <p className="text-2xl font-bold text-purple-400 mt-1">{stats.processing}</p>
+                                        <p className="text-sm text-gray-400">Confirmed</p>
+                                        <p className="text-2xl font-bold text-purple-400 mt-1">{stats.confirmed}</p>
                                     </div>
                                     <Package className="h-8 w-8 text-purple-400" />
+                                </div>
+                            </div>
+
+                            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-gray-400">Shipped</p>
+                                        <p className="text-2xl font-bold text-green-400 mt-1">{stats.shipped}</p>
+                                    </div>
+                                    <Truck className="h-8 w-8 text-green-400" />
                                 </div>
                             </div>
 
@@ -303,7 +331,7 @@ const ManageOrders = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                            {/* <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm text-gray-400">Revenue</p>
@@ -311,7 +339,7 @@ const ManageOrders = () => {
                                     </div>
                                     <TrendingUp className="h-8 w-8 text-green-400" />
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* Filters and Search */}
@@ -467,10 +495,10 @@ const ManageOrders = () => {
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
                             <div className="flex items-center justify-between p-6 border-b border-gray-700">
-                                <h3 className="text-xl font-semibold text-white">Order Details - #{selectedOrder.orderId}</h3>
+                                <h3 className="text-xl font-semibold text-white">Order Details - #{selectedOrder.orderNumber}</h3>
                                 <button
                                     onClick={() => setShowDetailsModal(false)}
-                                    className="text-gray-400 hover:text-white"
+                                    className="text-gray-400 hover:text-white cursor-pointer"
                                 >
                                     <X className="h-6 w-6" />
                                 </button>
@@ -482,9 +510,9 @@ const ManageOrders = () => {
                                     <div className="space-y-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-400">Customer</label>
-                                            <p className="text-white mt-1">{selectedOrder.customer?.companyName}</p>
-                                            <p className="text-sm text-gray-400">{selectedOrder.customer?.email}</p>
-                                            <p className="text-sm text-gray-400">{selectedOrder.customer?.contactNo}</p>
+                                            <p className="text-white mt-1">{selectedOrder.fullName}</p>
+                                            <p className="text-sm text-gray-400">{selectedOrder.email}</p>
+                                            <p className="text-sm text-gray-400">{selectedOrder.contactNo}</p>
                                         </div>
                                     </div>
                                     <div className="space-y-4">
@@ -509,25 +537,14 @@ const ManageOrders = () => {
 
                                 {/* Order Items */}
                                 <div className="border-t border-gray-700 pt-4">
-                                    <label className="block text-sm font-medium text-gray-400 mb-3">Order Items</label>
-                                    <div className="space-y-3">
-                                        {selectedOrder.items?.map((item, index) => (
-                                            <div key={index} className="flex justify-between items-center bg-gray-750 p-4 rounded-lg">
-                                                <div className="flex items-center space-x-4">
-                                                    <div className="h-12 w-12 bg-gray-700 rounded-lg flex items-center justify-center">
-                                                        <Package className="h-6 w-6 text-gray-400" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-white font-medium">{item.productName}</p>
-                                                        <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-white font-medium">₹{item.price?.toLocaleString()}</p>
-                                                    <p className="text-sm text-gray-400">Total: ₹{(item.price * item.quantity)?.toLocaleString()}</p>
-                                                </div>
-                                            </div>
-                                        ))}
+                                    <div className="flex justify-between">
+                                        <span>
+                                            <label className="block text-sm font-medium text-gray-400">Order Items ({selectedOrder.orderItemsCount})</label>
+                                        </span>
+                                        <span className='flex flex-col justify-end'>
+                                            <Eye className="h-4 w-4 cursor-pointer"
+                                                onClick={viewOrderItems} />
+                                        </span>
                                     </div>
                                 </div>
 
@@ -536,14 +553,8 @@ const ManageOrders = () => {
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-gray-300">
                                             <span>Subtotal</span>
-                                            <span>₹{selectedOrder.subtotal?.toLocaleString()}</span>
+                                            <span>₹{selectedOrder.grandTotal?.toLocaleString()}</span>
                                         </div>
-                                        {selectedOrder.tax > 0 && (
-                                            <div className="flex justify-between text-gray-300">
-                                                <span>Tax</span>
-                                                <span>₹{selectedOrder.tax?.toLocaleString()}</span>
-                                            </div>
-                                        )}
                                         {selectedOrder.shipping > 0 && (
                                             <div className="flex justify-between text-gray-300">
                                                 <span>Shipping</span>
@@ -552,7 +563,7 @@ const ManageOrders = () => {
                                         )}
                                         <div className="flex justify-between text-xl font-bold text-white pt-2 border-t border-gray-700">
                                             <span>Total</span>
-                                            <span>₹{selectedOrder.totalAmount?.toLocaleString()}</span>
+                                            <span>₹{selectedOrder.grandTotal?.toLocaleString()}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -563,7 +574,7 @@ const ManageOrders = () => {
                                             setShowDetailsModal(false);
                                             handleUpdateStatus(selectedOrder);
                                         }}
-                                        className="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                                        className="px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors cursor-pointer"
                                     >
                                         Update Status
                                     </button>
@@ -581,7 +592,7 @@ const ManageOrders = () => {
                                 <h3 className="text-xl font-semibold text-white">Update Order Status</h3>
                                 <button
                                     onClick={() => setShowStatusModal(false)}
-                                    className="text-gray-400 hover:text-white"
+                                    className="text-gray-400 hover:text-white cursor-pointer"
                                 >
                                     <X className="h-6 w-6" />
                                 </button>
@@ -592,14 +603,14 @@ const ManageOrders = () => {
                                     <label className="block text-sm font-medium text-gray-300 mb-3">
                                         Current Status: {getStatusBadge(selectedOrder.status)}
                                     </label>
-                                    <p className="text-sm text-gray-400 mb-4">Select new status for order #{selectedOrder.orderId}</p>
+                                    <p className="text-sm text-gray-400 mb-4">Select new status for order #{selectedOrder.orderNumber}</p>
                                 </div>
 
                                 <div className="space-y-2">
                                     {orderStatuses.map((status) => (
                                         <button
                                             key={status.value}
-                                            onClick={() => handleStatusChange(selectedOrder._id, status.value)}
+                                            onClick={() => handleStatusChange(selectedOrder.orderId, status.value)}
                                             disabled={updatingStatus || selectedOrder.status === status.value}
                                             className={`w-full flex items-center justify-between p-4 rounded-lg border-2 transition-all ${selectedOrder.status === status.value
                                                 ? 'bg-gray-700 border-gray-600 cursor-not-allowed opacity-50'
@@ -620,7 +631,7 @@ const ManageOrders = () => {
                                 <div className="flex justify-end space-x-4 pt-4 border-t border-gray-700">
                                     <button
                                         onClick={() => setShowStatusModal(false)}
-                                        className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors"
+                                        className="px-4 py-2 border border-gray-600 rounded-lg text-sm font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 transition-colors cursor-pointer"
                                         disabled={updatingStatus}
                                     >
                                         Cancel
@@ -628,6 +639,94 @@ const ManageOrders = () => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {showItemsModal && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+                                <h3 className="text-xl font-semibold text-white">Order Items</h3>
+                                <button
+                                    onClick={() => setShowItemsModal(false)}
+                                    className="text-gray-400 hover:text-white cursor-pointer"
+                                >
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
+
+                            <div className="p-6">
+                                {itemsLoading ? (
+                                    <div className="flex justify-center items-center h-40">
+                                        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+                                    </div>
+                                ) : orderItems.length === 0 ? (
+                                    <div className="text-center text-gray-400">No items found for this order.</div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {orderItems.map((item, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center bg-gray-750 p-4 rounded-lg"
+                                            >
+                                                <div className="flex items-center space-x-4">
+                                                    {/* ✅ Product Image */}
+                                                    {item.mainImage ? (
+                                                        <img
+                                                            src={item.mainImage}
+                                                            alt={item.productName}
+                                                            className="h-14 w-14 rounded-lg object-cover cursor-pointer hover:opacity-80 transition"
+                                                            onClick={() => {
+                                                                setPreviewImage(item.mainImage);
+                                                                setShowImagePreview(true);
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <div className="h-14 w-14 bg-gray-700 rounded-lg flex items-center justify-center">
+                                                            <Package className="h-6 w-6 text-gray-400" />
+                                                        </div>
+                                                    )}
+
+                                                    {/* ✅ Product Info */}
+                                                    <div>
+                                                        <p className="text-white font-medium">{item.productName}</p>
+                                                        <p className="text-sm text-gray-400">Quantity: {item.quantity}</p>
+                                                    </div>
+                                                </div>
+
+                                                {/* ✅ Price Section */}
+                                                <div className="text-right">
+                                                    <p className="text-white font-medium">₹{item.unitPrice?.toLocaleString()}</p>
+                                                    <p className="text-sm text-gray-400">
+                                                        Total: ₹{(item.unitPrice * item.quantity)?.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {showImagePreview && (
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[60]"
+                        onClick={() => setShowImagePreview(false)}
+                    >
+                        <img
+                            src={previewImage}
+                            alt="Preview"
+                            className="max-w-[90%] max-h-[90%] rounded-lg shadow-lg"
+                            onClick={(e) => e.stopPropagation()} // prevent modal close when clicking image
+                        />
+                        <button
+                            className="absolute top-6 right-6 text-gray-300 hover:text-white transition"
+                            onClick={() => setShowImagePreview(false)}
+                        >
+                            <X className="h-7 w-7" />
+                        </button>
                     </div>
                 )}
 

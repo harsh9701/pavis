@@ -10,11 +10,11 @@ import {
     Users,
     ShoppingCart,
     Package,
-    Settings,
     Menu,
     TrendingUp,
     UserCheck,
-    LayoutGrid
+    LayoutGrid,
+    Earth
 } from 'lucide-react';
 import axios from "axios";
 
@@ -57,7 +57,7 @@ const AddProduct = () => {
         { name: 'Customers', icon: Users, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
 
     useEffect(() => {
@@ -164,9 +164,6 @@ const AddProduct = () => {
         });
 
         const noOfFiles = formData.additionalImages.length + validFiles.length;
-        // console.log(noOfFiles);
-        // console.log(formData.additionalImages.length);
-        // console.log(validFiles.length);
 
         // Check limit
         if (noOfFiles > maxFiles) {

@@ -7,7 +7,7 @@ import {
     Edit,
     Trash2,
     Package,
-    Settings,
+    Earth,
     Menu,
     TrendingUp,
     UserCheck,
@@ -38,7 +38,7 @@ const ManageCustomers = () => {
         { name: 'Customers', icon: Users, active: true, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
     
     // Fetch customers on component mount

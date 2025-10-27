@@ -6,12 +6,12 @@ import {
     IndianRupee,
     Package,
     Plus,
-    Settings,
     Menu,
     X,
     TrendingUp,
     UserCheck,
-    LayoutGrid
+    LayoutGrid,
+    Earth
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
         { name: 'Customers', icon: Users, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
 
     const StatCard = ({ title, value, icon: Icon, subtitle, trend }) => (

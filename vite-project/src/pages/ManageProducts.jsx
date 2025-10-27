@@ -8,7 +8,6 @@ import {
     Edit,
     Trash2,
     Package,
-    Settings,
     Menu,
     TrendingUp,
     UserCheck,
@@ -18,7 +17,8 @@ import {
     Clock,
     Users,
     ShoppingCart,
-    LayoutGrid
+    LayoutGrid,
+    Earth
 } from 'lucide-react';
 import axios from "axios";
 
@@ -31,6 +31,8 @@ const ManageProducts = () => {
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [editingProduct, setEditingProduct] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("");
 
     const navigationItems = [
         { name: 'Dashboard', icon: TrendingUp, path: "/admin" },
@@ -39,7 +41,7 @@ const ManageProducts = () => {
         { name: 'Customers', icon: Users, path: "/manage-customers" },
         { name: 'Categories', icon: LayoutGrid, path: "/manage-categories" },
         { name: 'Orders', icon: ShoppingCart, path: "/manage-orders" },
-        { name: 'Settings', icon: Settings, path: "/admin-setting" }
+        { name: 'Go to Website', icon: Earth, path: "/" }
     ];
 
     // Fetch products on component mount
@@ -57,6 +59,15 @@ const ManageProducts = () => {
             console.error("Error fetching products:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get("/admin/categories");
+            setCategories(response.data.categories);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
         }
     };
 
@@ -129,6 +140,7 @@ const ManageProducts = () => {
 
 
     const handleEdit = (product) => {
+        // fetchCategories();
         setEditingProduct(product);
         setShowEditModal(true);
     };
@@ -456,38 +468,65 @@ const ManageProducts = () => {
                             </div>
 
                             <form onSubmit={handleUpdate} className="p-6 space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Product Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={editingProduct.productName}
+                                        onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
+                                        required
+                                        className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
+                                    />
+                                </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                                            Product Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={editingProduct.productName}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, productName: e.target.value })}
-                                            required
-                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white"
-                                        />
-                                    </div>
-
-                                    <div>
+                                    {/* <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">
                                             Category
                                         </label>
                                         <select
                                             value={editingProduct.category}
-                                            onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                                            onChange={(e) => {
+                                                const selectedCat = categories.find(cat => cat.name === e.target.value);
+                                                setEditingProduct({
+                                                    ...editingProduct,
+                                                    category: e.target.value,
+                                                    subcategory: selectedCat?.subcategories?.[0] || "" // optional: auto-select first subcategory
+                                                });
+                                                setSelectedCategory(e.target.value);
+                                            }}
                                             required
                                             className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
                                         >
-                                            <option value="electronics">Electronics</option>
-                                            <option value="machinery">Machinery</option>
-                                            <option value="office-supplies">Office Supplies</option>
-                                            <option value="raw-materials">Raw Materials</option>
-                                            <option value="tools">Tools & Equipment</option>
-                                            <option value="software">Software</option>
+                                            <option value="">Select Category</option>
+                                            {categories.map((cat) => (
+                                                <option key={cat._id} value={cat.name}>
+                                                    {cat.name}
+                                                </option>
+                                            ))}
                                         </select>
-                                    </div>
+                                    </div> */}
+
+                                    {/* <div>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                                            Subcategory
+                                        </label>
+                                        <select
+                                            value={editingProduct.subcategory || ""}
+                                            onChange={(e) => setEditingProduct({ ...editingProduct, subcategory: e.target.value })}
+                                            className="w-full px-4 py-2.5 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white pointer"
+                                        >
+                                            <option value="">Select Subcategory</option>
+                                            {categories
+                                                .find((cat) => cat.name === selectedCategory)
+                                                ?.subcategories?.map((sub, i) => (
+                                                    <option key={i} value={sub}>
+                                                        {sub}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div> */}
 
                                     <div>
                                         <label className="block text-sm font-medium text-gray-300 mb-2">

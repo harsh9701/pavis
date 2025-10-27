@@ -32,80 +32,82 @@ axios.defaults.withCredentials = true;
 
 function App() {
   return (
-    <Suspense fallback={<LoadingScreen />}>
+    <>
       <Toaster position="bottom-right" reverseOrder={false} />
-      <Routes>
+      <Suspense fallback={<LoadingScreen />}>
+        <Routes>
 
-        {/* Public routes */}
-        <Route element={<UserLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/explore" element={<ExploreProducts />} />
-          <Route path="/login" element={<LoginRegister />} />
-          <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
-          <Route path="/profile" element={<CustomerProfile />} />
-          <Route path="/product/:id" element={<ViewProductPage />} />
-          <Route path="/shop-by-category/:id" element={<ShopByCategory />} />
-        </Route>
+          {/* Public routes */}
+          <Route element={<UserLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/explore" element={<ExploreProducts />} />
+            <Route path="/login" element={<LoginRegister />} />
+            <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
+            <Route path="/profile" element={<CustomerProfile />} />
+            <Route path="/product/:id" element={<ViewProductPage />} />
+            <Route path="/shop-by-category/:id" element={<ShopByCategory />} />
+          </Route>
 
-        {/* Admin routes */}
-        <Route element={<AdminLayout />}>
-          <Route
-            path="/add-product"
-            element={
-              <AdminProtectedRoute>
-                <AddProduct />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <AdminProtectedRoute>
-                <AdminDashboard />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
-            path="/manage-products"
-            element={
-              <AdminProtectedRoute>
-                <ManageProducts />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
-            path="/manage-customers"
-            element={
-              <AdminProtectedRoute>
-                <ManageCustomers />
-              </AdminProtectedRoute>
-            }
-          />
-          <Route
-            path="/manage-categories"
-            element={
-              <AdminProtectedRoute>
-                <ManageCategories />
-              </AdminProtectedRoute>
-            }
-          />
+          {/* Admin routes */}
+          <Route element={<AdminLayout />}>
+            <Route
+              path="/add-product"
+              element={
+                <AdminProtectedRoute>
+                  <AddProduct />
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <AdminProtectedRoute>
+                  <AdminDashboard />
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage-products"
+              element={
+                <AdminProtectedRoute>
+                  <ManageProducts />
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage-customers"
+              element={
+                <AdminProtectedRoute>
+                  <ManageCustomers />
+                </AdminProtectedRoute>
+              }
+            />
+            <Route
+              path="/manage-categories"
+              element={
+                <AdminProtectedRoute>
+                  <ManageCategories />
+                </AdminProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/manage-orders"
-            element={
-              <AdminProtectedRoute>
-                <ManageOrders />
-              </AdminProtectedRoute>
-            }
-          />
+            <Route
+              path="/manage-orders"
+              element={
+                <AdminProtectedRoute>
+                  <ManageOrders />
+                </AdminProtectedRoute>
+              }
+            />
 
-          {/* Catch-all error route */}
-          <Route path="*" element={<ErrorPage />} />
-        </Route>
-      </Routes>
-    </Suspense>
+            {/* Catch-all error route */}
+            <Route path="*" element={<ErrorPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </>
   );
 }
 

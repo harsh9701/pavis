@@ -1,11 +1,25 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { User, Mail, Phone, MapPin, Package, ShoppingBag, Clock, Edit2, Save, X, ChevronRight, TrendingUp } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function CustomerProfile() {
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('info');
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!user) {
+            // Redirect to login if user is not authenticated
+            navigate("/login");
+        }
+    }, [user, navigate]);
+
+    if (!user) {
+        // Optional: show nothing while redirecting
+        return null;
+    }
 
     const [customerData, setCustomerData] = useState({
         name: 'John Doe',

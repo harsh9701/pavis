@@ -156,11 +156,39 @@ module.exports.getOrders = async (req, res) => {
             orderItemsCount: order.orderItems.length
         }));
 
-        console.log(orders);
-
         return res.status(200).json({ status: true, orders });
     } catch (err) {
-        console.log(err.message);
         return res.status(500).json({ status: false, message: "Internal server error" });
     }
-}
+};
+
+module.exports.updateOrderStatus = async (req, res) => {
+    try {
+        const status = req.body.status;
+        const orderId = req.params.orderId;
+
+        const order = await orderModel.findByIdAndUpdate(orderId, { status }, { new: true, runValidators: true });
+
+        if (!order) {
+            return res.status(404).json({ status: false, message: "Order not found" });
+        }
+        return res.status(200).json({ status: true, message: "Order status udpated" });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal server error" });
+    }
+};
+
+module.exports.getOrderItems = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+        
+        const orderItems = await orderModel.findById(orderId).select("orderItems");
+
+        if (!orderItems || orderItems.orderItems.length === 0) {
+            return res.status(404).json({ status: false, message: "OrderItems not found" });
+        }
+        return res.status(200).json({ status: true, items: orderItems.orderItems });
+    } catch (err) {
+        return res.status(500).json({ status: false, message: "Internal server error" });
+    }
+};

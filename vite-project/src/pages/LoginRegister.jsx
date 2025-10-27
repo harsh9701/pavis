@@ -38,7 +38,7 @@ export default function AuthHeroPage() {
                 if (response.status === 200) {
                     toast.success("Login Successful 🎉");
                     login(data);
-                    setTimeout(() => navigate("/"), 1500);
+                    setTimeout(() => navigate("/"), 1000);
                 }
             } else {
                 const response = await axios.post(`/users/register`, formData);
@@ -267,8 +267,6 @@ export default function AuthHeroPage() {
                     </div>
                 </div>
             </div>
-
-            <Toaster position="top-center" reverseOrder={false} />
         </div>
     );
 }
