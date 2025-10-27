@@ -75,6 +75,16 @@ module.exports.deleteProduct = async (req, res) => {
             return res.status(404).json({ status: false, message: "Product not found" });
         }
 
+        const cartWithProduct = await cartModel.find({ 'items.productId': req.params.id });
+
+        if (cartWithProduct.length > 0) {
+            // Product is in someone's cart, remove it from all carts
+            await cartModel.updateMany(
+                { 'items.productId': req.params.id },
+                { $pull: { items: { productId: req.params.id } } }
+            );
+        }
+
         // delete main image if exists
         if (product.mainImage) {
             await deleteFromFirebase(product.mainImage);

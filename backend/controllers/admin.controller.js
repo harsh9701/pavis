@@ -2,6 +2,7 @@ const userModel = require("../models/user.model");
 const categoryModel = require("../models/category.model");
 const orderModel = require("../models/order.model");
 const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
+const productModel = require("../models/product.model");
 
 module.exports.getCustomers = async (req, res) => {
     try {
@@ -101,6 +102,11 @@ module.exports.deleteCategory = async (req, res) => {
             return res.status(404).json({ status: false, message: "Category not found" });
         }
 
+        const productExists = await productModel.findOne({ category: categoryId });
+        if (productExists) {
+            return res.status(400).json({ status: false, message: "Products exist in this category" });
+        }
+
         if (isCategoryExist.imageUrl) {
             await deleteFromFirebase(isCategoryExist.imageUrl);
         }
@@ -118,18 +124,27 @@ module.exports.deleteSubcategory = async (req, res) => {
         const { categoryId, subIndex } = req.body;
 
         const category = await categoryModel.findById(categoryId);
-
         if (!category) {
             return res.status(404).json({ status: false, message: "Category not found" });
+        }
+
+        const subcategoryName = category.subcategories[subIndex];
+        if (!subcategoryName) {
+            return res.status(400).json({ status: false, message: "Invalid subcategory index" });
+        }
+
+        const productExists = await productModel.findOne({ category: categoryId });
+        if (productExists) {
+            return res.status(400).json({ status: false, message: "Products exist in this subcategory" });
         }
 
         category.subcategories.splice(subIndex, 1);
         await category.save();
 
-        return res.status(200).json({ status: true, message: "SubCategory Deleted" });
-
+        return res.status(200).json({ status: true, message: "Subcategory deleted" });
     } catch (error) {
-        return res.status(500).json({ status: false, message: true });
+        console.error(error);
+        return res.status(500).json({ status: false, message: "Server error" });
     }
 };
 
@@ -181,7 +196,7 @@ module.exports.updateOrderStatus = async (req, res) => {
 module.exports.getOrderItems = async (req, res) => {
     try {
         const orderId = req.params.orderId;
-        
+
         const orderItems = await orderModel.findById(orderId).select("orderItems");
 
         if (!orderItems || orderItems.orderItems.length === 0) {

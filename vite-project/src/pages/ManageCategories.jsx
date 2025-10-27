@@ -231,25 +231,39 @@ const ManageCategories = () => {
             cancelButtonText: "Cancel",
         }).then(async (e) => {
             if (e.isConfirmed) {
-                try {
-                    await toast.promise(
-                        axios.delete(`/admin/category/${id}`),
-                        {
-                            loading: "Deleting category...",
-                            success: "category deleted successfully ✅",
-                            error: "Failed to delete product ❌",
+                toast.promise(
+                    axios.delete(`/admin/category/${id}`),
+                    {
+                        loading: "Deleting category...",
+                        success: "category deleted successfully ✅",
+                    }
+                ).then((response) => {
+                    if (response.status === 200) {
+                        setCategories((prevCategory) =>
+                            prevCategory.filter((cat) => cat._id !== id));
+                    }
+                }).catch((error) => {
+                    if (error.response) {
+                        // ✅ express-validator errors
+                        if (error.response.data.errors) {
+                            error.response.data.errors.forEach((err) => {
+                                toast.error(err.msg);
+                            });
                         }
-                    ).then((response) => {
-                        if (response.status === 200) {
-                            setCategories((prevCategory) =>
-                                prevCategory.filter((cat) => cat._id !== id));
+                        // ✅ custom backend message
+                        else if (error.response.data.message) {
+                            toast.error(error.response.data.message);
                         }
-                    });
-                } catch (error) {
-                    console.error("Error deleting product:", error);
-                }
+                        // fallback
+                        else {
+                            toast.error("Something went wrong 😢");
+                        }
+                    } else {
+                        toast.error("Server not reachable 🚨");
+                    }
+                });
             }
-        });
+        })
     };
 
     // Delete subcategory
@@ -283,7 +297,26 @@ const ManageCategories = () => {
                     )
                 );
             }
-        })
+        }).catch((error) => {
+            if (error.response) {
+                // ✅ express-validator errors
+                if (error.response.data.errors) {
+                    error.response.data.errors.forEach((err) => {
+                        toast.error(err.msg);
+                    });
+                }
+                // ✅ custom backend message
+                else if (error.response.data.message) {
+                    toast.error(error.response.data.message);
+                }
+                // fallback
+                else {
+                    toast.error("Something went wrong 😢");
+                }
+            } else {
+                toast.error("Server not reachable 🚨");
+            }
+        });
     };
 
     return (
