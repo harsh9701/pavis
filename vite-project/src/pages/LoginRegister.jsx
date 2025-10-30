@@ -96,25 +96,27 @@ export default function AuthHeroPage() {
             <div className="relative z-10 max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center py-24">
 
                 {/* Left Side - Welcome Text */}
-                <div className="space-y-6 text-center lg:text-left px-4">
-                    <h1 className="text-5xl sm:text-6xl font-black leading-tight">
-                        Welcome to <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text text-transparent">Wholsera</span>
-                    </h1>
-                    <p className="text-gray-400 text-xl sm:text-2xl max-w-lg">
-                        Simplify wholesale: Connect directly with manufacturers and scale your business efficiently.
-                    </p>
+                <div className="space-y-2 md:space-y-6 text-center lg:text-left px-4">
+                    <div className="flex flex-wrap justify-center lg:justify-start">
+                        <h1 className="text-3xl lg:text-5xl sm:text-6xl font-black leading-tight">
+                            Welcome to <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-orange-400 bg-clip-text text-transparent">Wholsera</span>
+                        </h1>
+                        <p className="text-gray-400 text-m md:text-xl sm:text-2xl max-w-lg">
+                            Simplify wholesale: Connect directly with manufacturers and scale your business efficiently.
+                        </p>
+                    </div>
 
-                    <div className="flex flex-wrap gap-8 mt-8 justify-center lg:justify-start">
+                    <div className="flex flex-wrap gap-8 mt-2 lg:mt-8 justify-center lg:justify-start">
                         <div className="text-center">
-                            <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">15K+</div>
-                            <div className="text-gray-400 text-sm mt-1">Active Sellers</div>
+                            <div className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">15K+</div>
+                            <div className="text-gray-400 text-sm mt-1">Active products</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">80K+</div>
+                            <div className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">80K+</div>
                             <div className="text-gray-400 text-sm mt-1">Products</div>
                         </div>
                         <div className="text-center">
-                            <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">2M+</div>
+                            <div className="text-2xl sm:text-4xl font-black bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">2M+</div>
                             <div className="text-gray-400 text-sm mt-1">Orders</div>
                         </div>
                     </div>

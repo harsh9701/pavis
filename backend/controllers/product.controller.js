@@ -1,6 +1,7 @@
 const { uploadBase64ToFirebase, deleteFromFirebase } = require("../utils/helper");
 const productModel = require("../models/product.model");
 const cartModel = require("../models/cart.model");
+const categoryModel = require("../models/category.model");
 const mongoose = require("mongoose");
 
 module.exports.addProduct = async (req, res) => {
@@ -198,7 +199,7 @@ module.exports.newArrivals = async (req, res) => {
         const products = await productModel.find(
             {},
             { bulkPricing: 0, color: 0, material: 0, dimensions: 0, discount: 0, additionalImages: 0 },
-            { limit: 12 }
+            { limit: 24 }
         );
         return res.status(200).json({ status: true, products });
     } catch (err) {
@@ -324,16 +325,17 @@ module.exports.getProductsByCategory = async (req, res) => {
             return res.status(400).json({ status: false, message: "Invalid category ID" });
         }
 
+        const category = await categoryModel.findById(categoryId).select("name subcategories");
+
         const products = await productModel
             .find({ category: categoryId })
-            .select("productName unitPrice minimumOrderQuantity mainImage taxType taxRate")
-            .populate("category", "name");
+            .select("productName unitPrice minimumOrderQuantity mainImage taxType taxRate");
 
         if (products.length === 0) {
             return res.status(404).json({ status: false, message: "No products found in this category" });
         }
 
-        return res.status(200).json({ status: true, products });
+        return res.status(200).json({ status: true, products, category });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ status: false, message: "Internal Server Error" });

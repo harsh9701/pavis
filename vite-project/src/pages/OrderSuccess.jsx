@@ -32,6 +32,7 @@ export default function OrderSuccess() {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         fetchOrderData();
         const timer = setTimeout(() => setShowConfetti(false), 3000);
         return () => clearTimeout(timer);
