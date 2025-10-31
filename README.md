@@ -1,6 +1,6 @@
-# 🚀 Checkmeout
+# 🚀 Pavis
 
-Checkmeout is a B2B website designed to streamline business transactions and simplify the checkout process for customets. The application provides a secure, efficient, and user-friendly platform for businesses to manage orders, products.
+Pavis is a B2B website designed to streamline business transactions and simplify the checkout process for customets. The application provides a secure, efficient, and user-friendly platform for businesses to manage orders, products.
 
 ## 📖 Overview
 
