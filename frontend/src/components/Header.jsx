@@ -1,15 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Search, ShoppingCart, User, Menu, X, ArrowLeft, UserCircle, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function PavisHeader() {
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
     const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
-    const [cart, setCart] = useState([]);
-    const [user, setUser] = useState({ name: "John Doe", role: "user" }); // Demo user
+    const { user, logout } = useContext(AuthContext);
+    const { cart, setCart } = useCart();
     const userMenuRef = useRef(null);
     const mobileMenuRef = useRef(null);
 
@@ -50,9 +53,16 @@ export default function PavisHeader() {
         };
     }, [menuOpen]);
 
-    const handleLogout = () => {
-        setCart([]);
-        setUser(null);
+    const handleLogout = async () => {
+        try {
+            const response = await logout();
+            if (response.status === 200) {
+                setCart([]);
+                navigate("/");
+            }
+        } catch (err) {
+            navigate("/");
+        }
         setUserMenuOpen(false);
         setMenuOpen(false);
     };
@@ -77,11 +87,11 @@ export default function PavisHeader() {
                         <Link to="/" className="flex items-center group relative">
                             <div className="relative">
                                 {/* Logo */}
-                                    <img
-                                        src="/pavis-logo.png"
-                                        alt="Wholsera Logo"
-                                        className="h-10 sm:h-12 w-auto"
-                                    />
+                                <img
+                                    src="/pavis-logo.png"
+                                    alt="Wholsera Logo"
+                                    className="h-10 sm:h-12 w-auto"
+                                />
                                 {/* Small decorative element */}
                                 <div className="absolute -right-2 -top-1 w-2 h-2 bg-black rounded-full opacity-50"></div>
                             </div>

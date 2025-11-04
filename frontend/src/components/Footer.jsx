@@ -9,8 +9,8 @@ export default function Footer() {
                         <div className="flex items-center space-x-3 mb-4">
                             <Link to="/" className="flex items-center">
                                 <img
-                                    src="/WholseraFullLogo.png"
-                                    alt="Wholsera Logo"
+                                    src="/pavis-logo.png"
+                                    alt="Pavis Logo"
                                     className="h-10 sm:h-12 w-auto"
                                 />
                             </Link>
